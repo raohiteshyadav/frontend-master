@@ -44,6 +44,7 @@ const PreviewIncSerIt = () => {
   const [fileName, setFileName] = useState(null);
   const [approved, setApproved] = useState("");
   const [remark, setRemark] = useState("");
+  const [resolvedAt, setResolvedAt]= useState("");
 
   // States for fetched data
   const [categories, setCategories] = useState([]);
@@ -81,6 +82,7 @@ const PreviewIncSerIt = () => {
           setCategory(ticketData.category);
           setSubcategory(ticketData.subCategory);
           setItem(ticketData.item);
+          setResolvedAt(ticketData.resolvedAt);
         } catch (error) {
           console.error("Error fetching ticket data:", error);
           toast({
@@ -246,13 +248,7 @@ useEffect(() => {
       .then(() => {
         toast({
           title: "Success",
-          description: `Ticket ${
-            action === "approved"
-              ? "Approved"
-              : action === "rejected"
-              ? "Rejected"
-              : "Resolved"
-          } Successfully!`,
+          description: `Ticket Resolved Successfully!`,
           status: "success",
           duration: 5000,
           isClosable: true,
@@ -263,13 +259,7 @@ useEffect(() => {
         console.error(error);
         toast({
           title: "Error",
-          description: `Error ${
-            action === "approved"
-              ? "approving"
-              : action === "rejected"
-              ? "rejecting"
-              : "resolving"
-          } ticket`,
+          description: `Error in resolving ticket`,
           status: "error",
           duration: 5000,
           isClosable: true,
@@ -407,8 +397,11 @@ useEffect(() => {
                 colorScheme="blue"
                 size="lg"
                 onClick={() => handleSubmit("approved")}
-                isDisabled={!remark}
+                isDisabled={!remark || resolvedAt }
                 _hover={{ transform: "translateY(-2px)" }}
+                display={resolvedAt ? 
+                  "none" : "auto"
+                }
                 transition="all 0.2s"
               >
                 Resolve Request

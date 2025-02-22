@@ -46,9 +46,9 @@ const UserList = () => {
     email: "",
     contact: "",
     department: "",
-    reporting_to: "",
+    reportingTo: "",
     role: "",
-    password: "",
+    passkey: "",
   });
   const [isUploading, setIsUploading] = useState(false);
   const toast = useToast();
@@ -81,6 +81,7 @@ const UserList = () => {
               ? String(row["Reporting To"])
               : undefined,
             role: row["Role"],
+            passkey : String(row["passkey"]),
           }));
 
           setData(formattedData);
@@ -146,7 +147,8 @@ const UserList = () => {
       !newUser.name ||
       !newUser.department ||
       !newUser.contact ||
-      !newUser.role
+      !newUser.role ||
+      !newUser.id 
     ) {
       toast({
         title: "Validation Error",
@@ -159,7 +161,7 @@ const UserList = () => {
     }
 
     // Prepare the user data as an array
-    const userPayload = [{ ...newUser }]; // This is an array of one object
+    const userPayload = [newUser]; // This is an array of one object
 
     try {
       setIsUploading(true);
@@ -170,7 +172,7 @@ const UserList = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ data: userPayload }), // Sending the user in the correct format
+        body: JSON.stringify({ data: userPayload }), 
       });
 
       if (!response.ok) throw new Error("User addition failed");
@@ -190,7 +192,7 @@ const UserList = () => {
         email: "",
         contact: "",
         department: "",
-        reporting_to: "",
+        reportingTo: "",
         role: "",
         password: "",
       });
@@ -260,12 +262,12 @@ const handlePasswordChange = async () => {
 
 
   return (
-    <Container maxW="7xl" py={8}>
-      <Card bg={cardBg} borderColor={borderColor} shadow="md">
+    <Container  minH={'80%'} maxW="7xl" py={8}>
+      <Card  minH={'70vh'} bg={cardBg} borderColor={borderColor} shadow="md">
         <CardHeader>
           <Flex align="center" gap={2}>
             <FiUsers size="24px" />
-            <Heading size="lg">User Management</Heading>
+            <Text fontSize="3xl">User Management</Text>
           </Flex>
         </CardHeader>
 
@@ -295,8 +297,8 @@ const handlePasswordChange = async () => {
             <TabPanels>
               <TabPanel>
                 <VStack spacing={6} align="stretch">
-                  <Flex gap={4}>
-                    <Input
+                  <Flex gap={4} p={2} >
+                    <Input pt ={1}
                       type="file"
                       accept=".xlsx, .xls"
                       onChange={handleFileUpload}
@@ -326,6 +328,8 @@ const handlePasswordChange = async () => {
                             <Th>Contact</Th>
                             <Th>Department</Th>
                             <Th>Role</Th>
+                            <Th>Manager</Th>
+                            <Th>Password</Th>
                           </Tr>
                         </Thead>
                         <Tbody>
@@ -337,6 +341,8 @@ const handlePasswordChange = async () => {
                               <Td>{item.contact}</Td>
                               <Td>{item.department}</Td>
                               <Td>{item.role}</Td>
+                              <Td>{item.reportingTo}</Td>
+                              <Td>{item.passkey}</Td>
                             </Tr>
                           ))}
                         </Tbody>
@@ -412,7 +418,7 @@ const handlePasswordChange = async () => {
                       variant="filled"
                     />
                   </FormControl>
-                  <FormControl isRequired>
+                  <FormControl>
                     <FormLabel>Reporting Manager Id</FormLabel>
                     <Input
                       value={newUser.reporting_to}
@@ -441,7 +447,7 @@ const handlePasswordChange = async () => {
                     </Select>
                   </FormControl>
 
-                  <FormControl isRequired>
+                  <FormControl>
                     <FormLabel>Password</FormLabel>
                     <Input
                       value={newUser.password}
@@ -457,7 +463,7 @@ const handlePasswordChange = async () => {
                     colorScheme="blue"
                     onClick={handleAddUser}
                     isDisabled={
-                      !newUser.name || !newUser.department || !newUser.contact
+                      !newUser.name || !newUser.department || !newUser.contact || !newUser.id || !newUser.role 
                     }
                     width="full"
                     leftIcon={<FiUserPlus />}

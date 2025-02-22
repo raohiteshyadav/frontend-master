@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, useBreakpointValue } from '@chakra-ui/react';
+import { Box, Text, useBreakpointValue } from '@chakra-ui/react';
 import { keyframes } from '@emotion/react';
 
 const Marquee = ({ text }) => {
@@ -48,7 +48,7 @@ const Marquee = ({ text }) => {
 const Footer = () => {
   return (
     <footer>
-      <Marquee text="Rashmi Metaliks Limited, Rashmi Green Hydrogen Steel Private Limited, Rashmi 6 Paradigm Limited, Koove IOT Private Limited, Koove Organic Chemicals Private Limited, Reach Dredging Limited, Rashmi Pipe, Ravion Aviation Services Private Limited " />
+      <Marquee  text="Rashmi Metaliks Limited, Rashmi Green Hydrogen Steel Private Limited, Rashmi 6 Paradigm Limited, Koove IOT Private Limited, Koove Organic Chemicals Private Limited, Reach Dredging Limited, Rashmi Pipe, Ravion Aviation Services Private Limited " />
     </footer>
   );
 };

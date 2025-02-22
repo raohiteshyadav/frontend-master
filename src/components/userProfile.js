@@ -149,7 +149,7 @@ export const UserProfile = ({ user }) => {
               Role
             </Text>
             <Text fontSize="md" fontWeight="medium">
-              {user?.role || "N/A"}
+              {user?.role==="it"?"IT DEPARTMENT" : user?.role === "head" ? "Manager" : user?.role==="admin"? "IT Head" : "Employee"|| "N/A"}
             </Text>
           </Box>
         </VStack>

@@ -169,7 +169,7 @@ const SuperAdmin = () => {
             }}
             transition="all 0.2s"
           >
-            Add User
+            User Management
           </Button>
           <Text
             color="blue.600"
@@ -177,7 +177,7 @@ const SuperAdmin = () => {
             fontWeight="medium"
             textAlign="center"
           >
-            Add new users to the system.
+            Manage Users (ADD / Change Password)
           </Text>
         </VStack>
 
@@ -212,7 +212,7 @@ const SuperAdmin = () => {
             }}
             transition="all 0.2s"
           >
-            Add Categories
+            Category Management
           </Button>
           <Text
             color="green.600"
@@ -220,7 +220,7 @@ const SuperAdmin = () => {
             fontWeight="medium"
             textAlign="center"
           >
-            Manage categories for users.
+            Manage categories of tickets
           </Text>
         </VStack>
       </Stack>

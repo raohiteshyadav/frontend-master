@@ -151,63 +151,7 @@ const DashboardIt = () => {
   }, [currentPage]);
 
   return (
-    <Box p={6}>
-      {/* <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4} mb={6}>
-        <Card bg="blue.50">
-          <CardHeader>
-            <Heading size="md">Incident Requests</Heading>
-          </CardHeader>
-          <CardBody>
-            <Stack
-              direction={{ base: "column", md: "row" }}
-              spacing={4}
-              justifyContent={{ md: "space-between" }}
-              align="center"
-            >
-              <Stat>
-                <StatLabel>All</StatLabel>
-                <StatNumber color="blue.500">{openIncident+closeIncident}</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>Open</StatLabel>
-                <StatNumber color="red.500">{openIncident}</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>Closed</StatLabel>
-                <StatNumber color="green.500">{closeIncident}</StatNumber>
-              </Stat>
-            </Stack>
-          </CardBody>
-        </Card>
-
-        <Card bg="gray.50">
-          <CardHeader>
-            <Heading size="md">Service Requests</Heading>
-          </CardHeader>
-          <CardBody>
-            <Stack
-              direction={{ base: "column", md: "row" }}
-              spacing={4}
-              justifyContent={{ md: "space-between" }}
-              align="center"
-            >
-              <Stat>
-                <StatLabel>All</StatLabel>
-                <StatNumber color="blue.500">{openService+closeService}</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>Open</StatLabel>
-                <StatNumber color="red.500">{openService}</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>Closed</StatLabel>
-                <StatNumber color="green.500">{closeService}</StatNumber>
-              </Stat>
-            </Stack>
-          </CardBody>
-        </Card>
-      </Grid> */}
-
+    <Box p={6} minH={"79vh"}>
       <Card overflow={"hidden"}>
         <CardBody position="relative">
           {/* Table Container */}
@@ -215,15 +159,15 @@ const DashboardIt = () => {
             <Table variant="striped" colorScheme="gray">
               <Thead>
                 <Tr>
-                  <Th>Serial No.</Th>
-                  <Th>Created At</Th>
+                  <Th>Ticket No</Th>
+                  <Th>Created On</Th>
                   <Th>Description</Th>
                   <Th>Created By</Th>
                   <Th>Status</Th>
                   <Th>Type</Th>
                   <Th>Action</Th>
-                  <Th> Level of Approvement</Th>
-                  <Th>Remark by Head</Th>
+                  <Th> Level of Approval</Th>
+                  <Th>Remark by Approver</Th>
                   <Th>Resolved By</Th>
                 </Tr>
               </Thead>
@@ -239,8 +183,8 @@ const DashboardIt = () => {
                     >
                       {request.createdBy}
                     </Td>
-                    <Td color={request.resolvedAt ? "green.500" : "red.500"}>
-                      {request.resolvedAt ? "Resolved" : "Open"}
+                    <Td color={request.resolvedAt ? "red.500" : "green.500"}>
+                      {request.resolvedAt ? "Close" : "Open"}
                     </Td>
                     <Td>{request.type}</Td>
                     <Td>
@@ -249,12 +193,12 @@ const DashboardIt = () => {
                           onClick={() =>
                             handleRowClick(request.id, request.type)
                           }
-                          style={{ cursor: "pointer" }}
+                          // style={{ cursor: "pointer" }}
                           _hover={{ bg: "gray.50" }}
                           p={2}
                           color={"green.400"}
                         >
-                          Resolve
+                          {request.resolvedBy ? "View" : "Resolve"}
                         </Button>
                       </Box>
                     </Td>

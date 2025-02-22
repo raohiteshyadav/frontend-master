@@ -88,7 +88,7 @@ const Navbar = () => {
         >
           Raise A Ticket
         </NavLink>}
-        {user?.role != "employee" && !isLoginPage && (
+        {user?.role != "employee" && user?.role!= "it" && !isLoginPage && (
           <NavLink
             onClick={() => {
               navigate("/approval");

@@ -175,7 +175,7 @@ const ManagerHome = () => {
           </VStack>
         </Stack>
       </Container> */}
-      <UserProfile/>
+      <UserProfile user ={user}/>
       <Card w="full" maxW="7xl" shadow="md" borderRadius="xl" overflow="hidden">
         <CardBody position="relative" pb={16}>
           <Box overflowX="auto">
