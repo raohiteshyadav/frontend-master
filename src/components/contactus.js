@@ -1,8 +1,9 @@
-import React from 'react';
+import React , {useState} from 'react';
 import { Box, Heading, Text, Link, SimpleGrid, VStack } from '@chakra-ui/react';
 import { PhoneCall } from 'lucide-react';
 
 const ContactUs = () => {
+  const [toggle,setToggle] = useState(false);
   const teamMembers = [
     
     { "name": "Souman Maity", "position": "Junior Engineer", "email": "itkgp1@rashmigroup.com" },
@@ -23,23 +24,35 @@ const ContactUs = () => {
     <Box position={'relative'} bg="gray.100" py={10}>
       <Heading as="h1" fontSize="3xl" textAlign="center" mb={8}>Contact Us</Heading>
       <Text
-      bg={'green.200'}
-      p={2}
-      borderRadius={'md'}
-      position="absolute"
-      top="10"
-      right="4"
-      fontSize="xl"
-      color="green.800"
-      cursor={'text'}
-      display={'flex'}
-      gap={2}
-      justifyContent={'center'}
-      textAlign={'center'}
+      onClick={() => { setToggle(!toggle); }}
+    bg={'green.200'}
+    p={2}
+    borderRadius={'md'}
+    position="absolute"
+    top="10"
+    right="4"
+    fontSize="xl"
+    color="green.800"
+    cursor={'pointer'}  // Made cursor pointer for the PhoneCall button
+    display={'flex'}
+    gap={2}
+    justifyContent={'center'}
+    textAlign={'center'}
+  >
+    <PhoneCall 
+      color="red"
+      cursor="pointer"
+    />
+    <Text
+      display={toggle ? "block" : "none"}  // Fixing the display logic
+      opacity={toggle ? 1 : 0}  // For smoother transition
+      height={toggle ? "auto" : "0"}  // Collapsing the height to 0 when hidden
+      transition="all 0.3s ease"  // Smooth transition
     >
-    <PhoneCall></PhoneCall>+91-9035220720 , +91-8967115788
+      +91-9035220720, +91-8967115788
     </Text>
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={8} px={4}>
+  </Text>
+      <SimpleGrid columns={{ base: 1, md: 3, lg: 4 }} spacing={8} px={4}>
         {teamMembers.map((member, index) => (
           <VStack
             key={index}

@@ -74,8 +74,7 @@ const IncidentRequestForm = () => {
         );
         setCategories(response.data);
       } catch (error) {
-        console.error(error);
-        toast.error("Error fetching categories");
+        
       } finally {
         setLoading((prev) => ({ ...prev, categories: false }));
       }
@@ -398,7 +397,7 @@ const IncidentRequestForm = () => {
 
         <Divider />
 
-        <HStack w="full" spacing={4} justify="space-between" mt={4}>
+        <HStack w="full"  justify="space-between" m={0} p={4}>
           <Button
             colorScheme="gray"
             size="lg"
