@@ -32,8 +32,9 @@ import {
   Select,
 } from "@chakra-ui/react";
 import * as XLSX from "xlsx";
-import { FiUpload, FiUserPlus, FiUsers, FiKey } from "react-icons/fi";
+import { FiUpload, FiUserPlus, FiUsers, FiKey, FiEdit2 } from "react-icons/fi";
 import axios from "axios";
+import EditUser from "./editUser";
 
 const UserList = () => {
   // Add new state for password change
@@ -81,7 +82,7 @@ const UserList = () => {
               ? String(row["Reporting To"])
               : undefined,
             role: row["Role"],
-            passkey : String(row["passkey"]),
+            passkey: String(row["passkey"]),
           }));
 
           setData(formattedData);
@@ -148,7 +149,7 @@ const UserList = () => {
       !newUser.department ||
       !newUser.contact ||
       !newUser.role ||
-      !newUser.id 
+      !newUser.id
     ) {
       toast({
         title: "Validation Error",
@@ -172,7 +173,7 @@ const UserList = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ data: userPayload }), 
+        body: JSON.stringify({ data: userPayload }),
       });
 
       if (!response.ok) throw new Error("User addition failed");
@@ -208,62 +209,61 @@ const UserList = () => {
       setIsUploading(false);
     }
   };
-const handlePasswordChange = async () => {
-  if (!passwordChangeId) {
-    toast({
-      title: "Error",
-      description: "Please enter RML ID",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
-    return;
-  }
+  const handlePasswordChange = async () => {
+    if (!passwordChangeId) {
+      toast({
+        title: "Error",
+        description: "Please enter RML ID",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
 
-  try {
-    setIsChangingPassword(true);
+    try {
+      setIsChangingPassword(true);
 
-    const response = await axios.post(
-      `http://${apiIp}:3000/user/reset-password`,
-      {
-        id: passwordChangeId,  
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,  // Send token in Authorization header
+      const response = await axios.post(
+        `http://${apiIp}:3000/user/reset-password`,
+        {
+          id: passwordChangeId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Send token in Authorization header
+          },
         }
-      }
-    );
+      );
 
-    if (response.status !== 201) throw new Error("Password change failed");
+      if (response.status !== 201) throw new Error("Password change failed");
 
-    toast({
-      title: "Success",
-      description: "Password change request sent successfully",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
+      toast({
+        title: "Success",
+        description: "Password reset done.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
 
-    setPasswordChangeId("");  // Clear the input field after successful request
-  } catch (error) {
-    toast({
-      title: "Error",
-      description: "Failed to process password change",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
-  } finally {
-    setIsChangingPassword(false);  // Reset the loading state
-  }
-};
-
+      setPasswordChangeId(""); // Clear the input field after successful request
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to process password change",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsChangingPassword(false); // Reset the loading state
+    }
+  };
 
   return (
-    <Container  minH={'80%'} maxW="7xl" py={8}>
-      <Card  minH={'70vh'} bg={cardBg} borderColor={borderColor} shadow="md">
+    <Container minH={"80%"} maxW="7xl" py={8}>
+      <Card minH={"70vh"} bg={cardBg} borderColor={borderColor} shadow="md">
         <CardHeader>
           <Flex align="center" gap={2}>
             <FiUsers size="24px" />
@@ -273,7 +273,14 @@ const handlePasswordChange = async () => {
 
         <CardBody>
           <Tabs isFitted variant="soft-rounded" colorScheme="blue">
-            <TabList mb={4}>
+            <TabList
+              overflowX="hidden"
+              mb={4}
+              display="flex"
+              flexDirection={{ base: "column", md: "row" }} // Stacks tabs vertically on small screens
+              justifyContent="space-between"
+              w="100%"
+            >
               <Tab>
                 <Flex align="center" gap={2}>
                   <FiUpload />
@@ -288,8 +295,14 @@ const handlePasswordChange = async () => {
               </Tab>
               <Tab>
                 <Flex align="center" gap={2}>
+                  <FiEdit2 />
+                  <Text>Edit User</Text>
+                </Flex>
+              </Tab>
+              <Tab>
+                <Flex align="center" gap={2}>
                   <FiKey />
-                  <Text>Change Password</Text>
+                  <Text>Reset Password</Text>
                 </Flex>
               </Tab>
             </TabList>
@@ -297,8 +310,9 @@ const handlePasswordChange = async () => {
             <TabPanels>
               <TabPanel>
                 <VStack spacing={6} align="stretch">
-                  <Flex gap={4} p={2} >
-                    <Input pt ={1}
+                  <Flex gap={4} p={2}>
+                    <Input
+                      pt={1}
                       type="file"
                       accept=".xlsx, .xls"
                       onChange={handleFileUpload}
@@ -356,6 +370,8 @@ const handlePasswordChange = async () => {
                   )}
                 </VStack>
               </TabPanel>
+        
+              
               <TabPanel>
                 <VStack spacing={6}>
                   <FormControl isRequired>
@@ -421,9 +437,9 @@ const handlePasswordChange = async () => {
                   <FormControl>
                     <FormLabel>Reporting Manager Id</FormLabel>
                     <Input
-                      value={newUser.reporting_to}
+                      value={newUser.reportingTo}
                       onChange={(e) =>
-                        setNewUser({ ...newUser, reporting_to: e.target.value })
+                        setNewUser({ ...newUser, reportingTo: e.target.value })
                       }
                       placeholder="Enter ID of your manager"
                       variant="filled"
@@ -463,7 +479,11 @@ const handlePasswordChange = async () => {
                     colorScheme="blue"
                     onClick={handleAddUser}
                     isDisabled={
-                      !newUser.name || !newUser.department || !newUser.contact || !newUser.id || !newUser.role 
+                      !newUser.name ||
+                      !newUser.department ||
+                      !newUser.contact ||
+                      !newUser.id ||
+                      !newUser.role
                     }
                     width="full"
                     leftIcon={<FiUserPlus />}
@@ -471,6 +491,9 @@ const handlePasswordChange = async () => {
                     Add User
                   </Button>
                 </VStack>
+              </TabPanel>
+              <TabPanel>
+                <EditUser/>
               </TabPanel>
               <TabPanel>
                 <VStack spacing={6} align="stretch">
@@ -493,7 +516,7 @@ const handlePasswordChange = async () => {
                     width="full"
                     leftIcon={<FiKey />}
                   >
-                    Change Password
+                    Reset Password
                   </Button>
                 </VStack>
               </TabPanel>

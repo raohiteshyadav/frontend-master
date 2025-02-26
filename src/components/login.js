@@ -145,7 +145,7 @@ const Login = () => {
 
   return (
     <Grid
-      templateColumns="50% 50%"
+      templateColumns={{base:"1fr", md:"1fr 1fr"}}
       minH="70vh"
       maxH="79vh"
       overflowY={"hidden"}
@@ -155,7 +155,8 @@ const Login = () => {
         bgImage="https://blog.octobits.io/wp-content/uploads/2023/12/octobits-it-services-management-framework.png"
         bgSize="cover"
         bgPosition="center"
-      />
+        display ={{base:"none", md:"block" }}
+      />  
 
       <GridItem
         display="flex"

@@ -111,7 +111,6 @@ function App() {
                     }
                   />
                   <Route path="/login" element={<Login />} />
-                  <Route path="/contact" element={<ContactUs />} />
                   <Route
                     path="/approval"
                     element={
@@ -150,6 +149,8 @@ function App() {
             <Footer />
           </Suspense>
         </AuthProvider>
+        <Routes><Route path="/contact" element={<ContactUs />} /></Routes>
+        
       </AppProviders>
     </Router>
   );
