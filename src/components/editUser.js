@@ -16,6 +16,7 @@ import {
 import { FiUserPlus } from "react-icons/fi";
 import axios from "axios";
 import { Search2Icon } from "@chakra-ui/icons";
+import { CookingPot } from "lucide-react";
 
 const EditUser = () => {
   const apiIp = process.env.REACT_APP_API_IP;
@@ -27,7 +28,6 @@ const EditUser = () => {
     department: "",
     reportingTo: "",
     role: "",
-    password: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -84,6 +84,36 @@ const EditUser = () => {
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await axios.delete(
+        `http://${apiIp}:3000/user/edit-user/${formData.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status == 200) {
+        toast({
+          title: "Success",
+          description: "User deleted successfully.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } catch(e) {
+      toast({
+        title: "Failure",
+        description: e?.response?.data?.message || "Error while deleting user.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -204,23 +234,14 @@ const EditUser = () => {
             placeholder="Select Role"
             variant="filled"
           >
+            <option value="admin" disabled>
+              IT Head
+            </option>
             <option value="it">IT Department</option>
             <option value="head">Manager</option>
             <option value="employee">Employee</option>
             {/* Add more contact options as needed */}
           </Select>
-        </FormControl>
-
-        <FormControl>
-          <FormLabel>Password</FormLabel>
-          <Input
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Enter Password"
-            variant="filled"
-          />
         </FormControl>
 
         <Box
@@ -229,8 +250,13 @@ const EditUser = () => {
           justifyContent={"space-around"}
           w={"full"}
         >
-          <Button width={"full"} colorScheme="red" disabled={!formData.name}>
-            Delete User
+          <Button
+            width={"full"}
+            colorScheme="red"
+            disabled={!formData.name}
+            onClick={handleDelete}
+          >
+            <CookingPot size={16} /> &nbsp; Delete User
           </Button>
           <Button
             colorScheme="blue"

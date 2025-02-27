@@ -143,14 +143,13 @@ function App() {
                       </ProtectedRoute>
                     }
                   />
+                  <Route path="/contact" element={<ContactUs />} />
                 </Routes>
               </div>
             </div>
             <Footer />
           </Suspense>
         </AuthProvider>
-        <Routes><Route path="/contact" element={<ContactUs />} /></Routes>
-        
       </AppProviders>
     </Router>
   );

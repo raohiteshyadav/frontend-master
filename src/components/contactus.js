@@ -17,7 +17,7 @@ const ContactUs = () => {
     { "name": "Shuvadeep Sen", "position": "Executive", "email": "itkgp12@rashmigroup.com" },
     { "name": "Arnab Jana", "position": "Executive", "email": "itkgp13@rashmigroup.com" },
     { "name": "Rajkamal Sahu", "position": "Network Engineer", "email": "itkgp14@rashmigroup.com" },
-    { "name": "Samaresh Jana", "position": "IT Support Engineer", "email": "samaresh.jana@rashmigroup.in" }
+    { "name": "Samaresh Jana", "position": "IT Support Engineer", "email": "itkgp16@rashmigroup.in" }
 ];
 
   return (

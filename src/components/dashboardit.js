@@ -1,15 +1,9 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
-  Grid,
   Card,
-  CardHeader,
   CardBody,
-  Heading,
   Text,
-  Stat,
-  StatLabel,
-  StatNumber,
   Table,
   Thead,
   Tbody,
@@ -18,12 +12,14 @@ import {
   Td,
   Button,
   IconButton,
-  Stack,
   CloseButton,
+  FormControl,
+  FormLabel,
+  Input,
+  Select,
 } from "@chakra-ui/react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, SlidersHorizontalIcon } from "lucide-react";
 import axios from "axios";
-import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 const UserDetailsBox = ({ userDetails, onClose }) => (
   <Box
@@ -97,8 +93,12 @@ const DashboardIt = () => {
   const [lists, setLists] = useState([]);
   const [userDetails, setUserDetails] = useState();
   const pageSize = 50;
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filterType, setFilterType] = useState("all");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterDate, setFilterDate] = useState(null);
+  const [activeFilterCount, setActiveFilterCount] = useState(0);
 
-  // const totalPages = Math.ceil(recentRequests.length / itemsPerPage);
   const handleRowClick = (id, type) => {
     navigate(`/service-request-form-dept/${id}?type=${type}`);
   };
@@ -128,7 +128,10 @@ const DashboardIt = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `http://${apiIp}:3000/tickets/it?pageNumber=${currentPage}&pageSize=${pageSize}`,
+        `http://${apiIp}:3000/tickets/it?pageNumber=${currentPage}&pageSize=${pageSize}` +
+          (filterDate ? `&date=${filterDate}` : "") +
+          (filterType !== "all" ? `&type=${filterType}` : "") +
+          (filterStatus !== "all" ? `&status=${filterStatus}` : ""),
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -146,14 +149,102 @@ const DashboardIt = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [currentPage]);
+   useEffect(() => {
+      let count = 0;
+      if(filterDate)count++;
+      if(filterStatus !== 'all')count++;
+      if(filterType !== 'all') count++;
+      setActiveFilterCount(count)
+      fetchData();
+    }, [currentPage, filterDate, filterType, filterStatus]);
+  
 
   return (
-    <Box p={6} minH={"79vh"}>
-      <Card overflow={"hidden"}>
-        <CardBody position="relative">
+    <Box p={6} position={"relative"} minH={"79vh"}>
+       <Card pt={"20px"} minH={'75vh'}>
+           <CardBody position="relative" >
+        <Button
+            position={"absolute"}
+            zIndex={9}
+            top={"-15px"}
+            right={"20px"}
+            borderRadius={"md"}
+            cursor={"pointer"}
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+          >
+            <SlidersHorizontalIcon />
+            {activeFilterCount > 0 && (
+              <span
+                style={{
+                  position: "absolute",
+                  top: "-5px",
+                  right: "-7px",
+                  backgroundColor: "red",
+                  color: "white",
+                  borderRadius: "50%",
+                  padding: "2px 6px",
+                  fontSize: "12px",
+                }}
+              >
+                {activeFilterCount}
+              </span>
+            )}
+          </Button>
+          {isFilterOpen && (
+            <Box
+              boxShadow={"md"}
+              borderRadius={"md"}
+              gap={4}
+              display={"flex"}
+              position={"absolute"}
+              zIndex={11}
+              backgroundColor="#edf2f7"
+              p={4}
+              top={"30px"}
+              right={"20px"}
+            >
+              <FormControl w={"3sm"}>
+                <FormLabel>Select Date</FormLabel>
+                <Input
+                  bg={"white"}
+                  type="date"
+                  value={filterDate}
+                  onChange={(e) => {
+                    setFilterDate(e.target.value);
+                  }}
+                ></Input>
+              </FormControl>
+              <FormControl w={"3sm"}>
+                <FormLabel>Ticket Type</FormLabel>
+                <Select
+                  bg={"white"}
+                  size={"md"}
+                  value={filterType}
+                  onChange={(e) => {
+                    setFilterType(e.target.value);
+                  }}
+                >
+                  <option value={"all"}>All</option>
+                  <option value={"Incident"}>Incident</option>
+                  <option value={"Service"}>Service</option>
+                </Select>
+              </FormControl>
+              <FormControl w={"3sm"}>
+                <FormLabel>Status</FormLabel>
+                <Select
+                  bg={"white"}
+                  value={filterStatus}
+                  onChange={(e) => {
+                    setFilterStatus(e.target.value);
+                  }}
+                >
+                  <option value={"all"}>All</option>
+                  <option value={"open"}>Open</option>
+                  <option value={"close"}>Close</option>
+                </Select>
+              </FormControl>
+            </Box>
+          )}
           {/* Table Container */}
           <Box overflowX="auto" maxWidth="100%" mb={4}>
             <Table variant="striped" colorScheme="gray">
@@ -243,7 +334,7 @@ const DashboardIt = () => {
           </Text>
           <IconButton
             icon={<ChevronRight />}
-            isDisabled={currentPage === totalPages}
+            isDisabled={currentPage >= totalPages}
             onClick={() => setCurrentPage((prev) => prev + 1)}
           />
         </Box>

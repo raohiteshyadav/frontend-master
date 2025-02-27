@@ -308,7 +308,7 @@ const UserList = () => {
             </TabList>
 
             <TabPanels>
-              <TabPanel>
+              <TabPanel minHeight={"50vh"}>
                 <VStack spacing={6} align="stretch">
                   <Flex gap={4} p={2}>
                     <Input
@@ -466,9 +466,9 @@ const UserList = () => {
                   <FormControl>
                     <FormLabel>Password</FormLabel>
                     <Input
-                      value={newUser.password}
+                      value={newUser.passkey}
                       onChange={(e) =>
-                        setNewUser({ ...newUser, password: e.target.value })
+                        setNewUser({ ...newUser, passkey: e.target.value })
                       }
                       placeholder="Enter Password"
                       variant="filled"
@@ -495,7 +495,7 @@ const UserList = () => {
               <TabPanel>
                 <EditUser/>
               </TabPanel>
-              <TabPanel>
+              <TabPanel minHeight={"50vh"}>
                 <VStack spacing={6} align="stretch">
                   <FormControl isRequired>
                     <FormLabel>RML ID</FormLabel>
