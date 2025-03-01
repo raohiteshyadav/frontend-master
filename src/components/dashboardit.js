@@ -17,8 +17,22 @@ import {
   FormLabel,
   Input,
   Select,
+  Tag,
+  TagLabel,
+  TagCloseButton,
+  VStack,
+  HStack,
 } from "@chakra-ui/react";
-import { ChevronLeft, ChevronRight, SlidersHorizontalIcon } from "lucide-react";
+import {
+  Check,
+  CheckIcon,
+  ChevronLeft,
+  ChevronRight,
+  Clock2,
+  Clock2Icon,
+  SlidersHorizontalIcon,
+  X,
+} from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 const UserDetailsBox = ({ userDetails, onClose }) => (
@@ -149,21 +163,20 @@ const DashboardIt = () => {
     }
   };
 
-   useEffect(() => {
-      let count = 0;
-      if(filterDate)count++;
-      if(filterStatus !== 'all')count++;
-      if(filterType !== 'all') count++;
-      setActiveFilterCount(count)
-      fetchData();
-    }, [currentPage, filterDate, filterType, filterStatus]);
-  
+  useEffect(() => {
+    let count = 0;
+    if (filterDate) count++;
+    if (filterStatus !== "all") count++;
+    if (filterType !== "all") count++;
+    setActiveFilterCount(count);
+    fetchData();
+  }, [currentPage, filterDate, filterType, filterStatus]);
 
   return (
     <Box p={6} position={"relative"} minH={"79vh"}>
-       <Card pt={"20px"} minH={'75vh'}>
-           <CardBody position="relative" >
-        <Button
+      <Card pt={"20px"} minH={"75vh"}>
+        <CardBody position="relative">
+          <Button
             position={"absolute"}
             zIndex={9}
             top={"-15px"}
@@ -250,35 +263,46 @@ const DashboardIt = () => {
             <Table variant="striped" colorScheme="gray">
               <Thead>
                 <Tr>
-                  <Th>Ticket No</Th>
-                  <Th>Created On</Th>
-                  <Th>Description</Th>
-                  <Th>Created By</Th>
-                  <Th>Status</Th>
-                  <Th>Type</Th>
-                  <Th>Action</Th>
-                  <Th> Level of Approval</Th>
-                  <Th>Remark by Approver</Th>
-                  <Th>Resolved By</Th>
+                  <Th padding={"10px"}>Ticket No</Th>
+                  <Th padding={"10px"}>Created On</Th>
+                  <Th padding={"10px"}>Description</Th>
+                  <Th padding={"10px"}>Created By</Th>
+                  <Th padding={"10px"}>Status</Th>
+                  <Th padding={"10px"}>Type</Th>
+                  <Th padding={"10px"}>Action</Th>
+                  <Th padding={"10px"}>
+                    {" "}
+                    Level of
+                    <br /> Approval
+                  </Th>
+                  <Th padding={"10px"}>
+                    Remark by
+                    <br /> Approver
+                  </Th>
+                  <Th padding={"10px"}>Resolved By</Th>
                 </Tr>
               </Thead>
               <Tbody>
                 {lists.map((request) => (
                   <Tr key={request.id}>
-                    <Td>{request.sequenceNo}</Td>
-                    <Td>{request.createdAt}</Td>
-                    <Td>{request.query}</Td>
+                    <Td padding={"10px"}>{request.sequenceNo}</Td>
+                    <Td padding={"10px"}>{request.createdAt}</Td>
+                    <Td padding={"10px"}>{request.query}</Td>
                     <Td
+                      padding={"10px"}
                       cursor="pointer"
                       onClick={() => handleCreatedBy(request.createdById)}
                     >
                       {request.createdBy}
                     </Td>
-                    <Td color={request.resolvedAt ? "red.500" : "green.500"}>
+                    <Td
+                      padding={"10px"}
+                      color={request.resolvedAt ? "red.500" : "green.500"}
+                    >
                       {request.resolvedAt ? "Close" : "Open"}
                     </Td>
-                    <Td>{request.type}</Td>
-                    <Td>
+                    <Td padding={"10px"}>{request.type}</Td>
+                    <Td padding={"10px"}>
                       <Box display={"flex"} gap={2}>
                         <Button
                           onClick={() =>
@@ -293,21 +317,96 @@ const DashboardIt = () => {
                         </Button>
                       </Box>
                     </Td>
-                    <Td>
+                    <Td padding={"5px 10px"}>
+                      {request.type === "Service" && (
+                        <VStack gap={1} alignItems={"left"}>
+                          <HStack spacing={4}>
+                            <Tag
+                            minWidth={"50px"}
+                              size={"md"}
+                              key={"md"}
+                              borderRadius="full"
+                              variant="solid"
+                              colorScheme={
+                                request?.headApprovedAt
+                                  ? "green"
+                                  : request.headRejectedAt
+                                  ? "red"
+                                  : "yellow"
+                              }
+                            >
+                              <TagLabel mr={"8px"}>L1</TagLabel>
+                              {request?.headApprovedAt ? (
+                                <CheckIcon
+                                  style={{ color: "white.800" }}
+                                  size={"14px"}
+                                />
+                              ) : request.headRejectedAt ? (
+                                <X
+                                  style={{ color: "white.800" }}
+                                  size={"14px"}
+                                />
+                              ) : (
+                                <Clock2Icon
+                                  style={{ color: "white.800" }}
+                                  size={"14px"}
+                                />
+                              )}
+                            </Tag>
+                          </HStack>
+                          <HStack spacing={4}>
+                            <Tag
+                             minWidth={"50px"}
+                              size={"md"}
+                              key={"md"}
+                              borderRadius="full"
+                              variant="solid"
+                              colorScheme={
+                                request?.itHeadApprovedAt
+                                  ? "green"
+                                  : request.itHeadRejectedAt
+                                  ? "red"
+                                  : "yellow"
+                              }
+                            >
+                              <TagLabel mr={"8px"}>L2</TagLabel>
+                              {request?.itHeadApprovedAt ? (
+                                <CheckIcon
+                                  style={{ color: "white.800" }}
+                                  size={"14px"}
+                                />
+                              ) : request.itHeadRejectedAt ? (
+                                <X
+                                  style={{ color: "white.800" }}
+                                  size={"14px"}
+                                />
+                              ) : (
+                                <Clock2Icon
+                                  style={{ color: "white.800" }}
+                                  size={"14px"}
+                                />
+                              )}
+                            </Tag>
+                          </HStack>
+                        </VStack>
+                      )}
+                    </Td>
+
+                    {/* <Td padding={"10px"}>
                       {request.type === "Incident"
                         ? ""
                         : request.itHeadApprovedAt
-                        ? "L2 Approved"
+                        ? <Tag><TagLabel>L2</TagLabel></Tag>
                         : request.itHeadRejectedAt
                         ? "L2 Rejected"
                         : request.headApprovedAt
                         ? "L1 Approved"
                         : request.headRejectedAt
                         ? "L1 Rejected"
-                        : "Waiting for L1 Approval"}
-                    </Td>
-                    <td>{request.itHeadRemark}</td>
-                    <td>{request.resolvedBy}</td>
+                        : <Tag colorScheme="yellow" size={'sm'} gap={1}><Clock10Icon size={'12px'}/><TagLabel>L1</TagLabel></Tag>}
+                    </Td> */}
+                    <td padding={"10px"}>{request.itHeadRemark}</td>
+                    <td padding={"10px"}>{request.resolvedBy}</td>
                   </Tr>
                 ))}
               </Tbody>

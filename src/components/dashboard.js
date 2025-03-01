@@ -23,17 +23,15 @@ import {
   FormLabel,
   Input,
   Select,
+  useToast,
 } from "@chakra-ui/react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  SlidersHorizontalIcon,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, SlidersHorizontalIcon } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const toast = useToast();
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
@@ -49,7 +47,27 @@ const Dashboard = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterDate, setFilterDate] = useState(null);
   const [activeFilterCount, setActiveFilterCount] = useState(0);
+  const [filterIt, setFilterIt] = useState('all');
+  const [filterItUser, setFilterItUser] = useState([]);
 
+  const fetchItUser = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`http://${apiIp}:3000/user/it-users`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setFilterItUser(response.data);
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "",
+        duration: "3000",
+        status: "error",
+      });
+    }
+  };
   const handleRowClick = (id) => {
     navigate(`/service-request-form-it/${id}`);
   };
@@ -60,6 +78,7 @@ const Dashboard = () => {
         `http://${apiIp}:3000/tickets/it?pageNumber=${currentPage}&pageSize=${pageSize}` +
           (filterDate ? `&date=${filterDate}` : "") +
           (filterType !== "all" ? `&type=${filterType}` : "") +
+          (filterIt !== "all" ? `&it=${filterIt}` : "") +
           (filterStatus !== "all" ? `&status=${filterStatus}` : ""),
         {
           headers: {
@@ -81,7 +100,9 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `http://${apiIp}:3000/tickets/dashboard`,
+        `http://${apiIp}:3000/tickets/dashboard?dummy=dummy`+
+        (filterDate ? `&date=${filterDate}` : "") +
+        (filterIt !== "all" ? `&it=${filterIt}` : ""),
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -100,17 +121,24 @@ const Dashboard = () => {
     }
   };
 
-  useEffect(()=>{
-       fetchDashboard();
-  },[])
+  useEffect(() => {
+    setActiveFilterCount(0);
+    fetchDashboard();
+    fetchItUser();
+  }, []);
   useEffect(() => {
     let count = 0;
-    if(filterDate)count++;
-    if(filterStatus !== 'all')count++;
-    if(filterType !== 'all') count++;
-    setActiveFilterCount(count)
+    if (filterDate) count++;
+    if (filterStatus !== "all") count++;
+    if (filterType !== "all") count++;
+    if (filterIt !== "all") count++;
+    setActiveFilterCount(count);
     fetchData();
-  }, [currentPage, filterDate, filterType, filterStatus]);
+  }, [currentPage, filterDate, filterType, filterStatus, filterIt]);
+
+  useEffect(()=>{
+    fetchDashboard();
+  },[filterDate,filterIt])
 
   return (
     <Box p={6}>
@@ -174,8 +202,8 @@ const Dashboard = () => {
         </Card>
       </Grid>
 
-      <Card pt={"20px"} minH={'50vh'}>
-        <CardBody position="relative" >
+      <Card pt={"20px"} minH={"50vh"}>
+        <CardBody position="relative">
           <Button
             position={"absolute"}
             zIndex={9}
@@ -217,7 +245,22 @@ const Dashboard = () => {
               right={"20px"}
             >
               <FormControl w={"3sm"}>
-                <FormLabel>Select Date</FormLabel>
+                <FormLabel>Resolved By</FormLabel>
+                <Select
+                  bg={"white"}
+                  value={filterIt}
+                  onChange={(e) => {
+                    setFilterIt(e.target.value);
+                  }}
+                >
+                  <option value="all">All</option>
+                 { filterItUser.map((user) =>
+                  (<option value={user.id}>{user.label}</option>))}
+
+                </Select>
+              </FormControl>
+              <FormControl w={"3sm"}>
+                <FormLabel>Created On</FormLabel>
                 <Input
                   bg={"white"}
                   type="date"
@@ -256,18 +299,6 @@ const Dashboard = () => {
                   <option value={"close"}>Close</option>
                 </Select>
               </FormControl>
-
-              {/* <Button
-                position={"absolute"}
-                zIndex={9}
-                top={"-15px"}
-                right={"20px"}
-                borderRadius={"md"}
-                cursor={"pointer"}
-                onClick={() => setIsFilterOpen(!isFilterOpen)}
-              >
-                <SlidersHorizontalIcon />
-              </Button> */}
             </Box>
           )}
           {/* Table Container */}

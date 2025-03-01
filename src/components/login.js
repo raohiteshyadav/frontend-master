@@ -146,7 +146,7 @@ const Login = () => {
   return (
     <Grid
       templateColumns={{base:"1fr", md:"1fr 1fr"}}
-      minH="70vh"
+      minH="79vh"
       maxH="79vh"
       overflowY={"hidden"}
     >
@@ -302,7 +302,7 @@ const Login = () => {
             color="blue.500"
           >
             {loginType === "email"
-              ? "Login with Password"
+              ? "Login with Username-Password"
               : "Login with Email OTP"}
           </Button>
         </Box>
