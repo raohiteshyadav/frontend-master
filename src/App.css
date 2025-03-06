@@ -12,7 +12,9 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
-
+.css-13cymwt-control{
+  min-width: 250px !important ;
+}
 .css-h94677{
   padding: 0px;
 }

@@ -11,6 +11,7 @@ import Footer from "./components/footer";
 import UserList from "./components/itsuperadmin";
 import UserCat from "./components/itsuperadmincat";
 import SuperAdmin from "./components/superadmin";
+import "./App.css";
 
 // Lazy loading components
 const ServiceRequestForm = lazy(() =>
