@@ -361,7 +361,7 @@ useEffect(() => {
               <FormLabel>Description</FormLabel>
               <Textarea
                 value={description}
-                isReadOnly
+                onChange = {(e)=>setDescription(e.target.value)}
                 bg="gray.50"
                 minH="120px"
               />
