@@ -27,12 +27,14 @@ import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import MediaUploader from "./mediaUploader";
 import MediaPreview from "./mediaPreview";
+import { useAuth } from "../providers/authProvider";
 
 const apiIp = process.env.REACT_APP_API_IP;
 
 const ServiceRequestForm = () => {
   const navigate = useNavigate();
   const toast = useToast();
+  const user=useAuth();
 
   // Form state
   const [description, setDescription] = useState("");
@@ -41,11 +43,12 @@ const ServiceRequestForm = () => {
   const [subcategory, setSubcategory] = useState("");
   const [item, setItem] = useState("");
   const [attachmentId, setAttachmentId] = useState(null);
-  const [fileName, setFileName] = useState(null);
+  const [fileName,setFileName]=useState("");
 
   // States for fetched data
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
+  const [userId,setUserId] = useState("");
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState({
     categories: false,
@@ -231,6 +234,7 @@ const ServiceRequestForm = () => {
     }
 
     const payload = {
+      userId:userId,
       query: description,
       priority: severity,
       subCategory: selectedSubcategory.label,
@@ -345,6 +349,28 @@ const ServiceRequestForm = () => {
                 minH="120px"
               />
             </FormControl>
+
+            <FormControl isRequired>
+              <FormLabel>Description </FormLabel>
+              <Textarea
+                placeholder="Enter request description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                minH="120px"
+              />
+            </FormControl>
+            
+            
+            {(user?.role=='it')&&
+              (<FormControl isRequired>
+              <FormLabel>On Behalf of</FormLabel>
+              <Textarea
+                placeholder="Create ticket on behalf of any user"
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+                minH="120px"
+              />
+            </FormControl>)}
 
             {!attachmentId ? (
               <FormControl>
