@@ -39,7 +39,7 @@ const ManagerHome = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `http://${apiIp}:3000/tickets/approval?pageNumber=${currentPage}&pageSize=${pageSize}`,
+        `http://${apiIp}/tickets/approval?pageNumber=${currentPage}&pageSize=${pageSize}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

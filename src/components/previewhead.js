@@ -41,7 +41,7 @@ const PreviewHead = () => {
     if (id) {
       const token = localStorage.getItem("token");
       axios
-        .get(`http://${apiIp}:3000/tickets/${id}`, {
+        .get(`http://${apiIp}/tickets/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -69,7 +69,7 @@ const PreviewHead = () => {
     const token = localStorage.getItem("token");
     axios
       .post(
-        `http://${apiIp}:3000/tickets/approve-head/${id}`,
+        `http://${apiIp}/tickets/approve-head/${id}`,
         { query: description, action },
         {
           headers: {

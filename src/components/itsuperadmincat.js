@@ -51,7 +51,7 @@ const UserCat = () => {
 
         try {
           const response = await axios.get(
-            `http://${apiIp}:3000/tickets/drop/category?type=${requestType}`,
+            `http://${apiIp}/tickets/drop/category?type=${requestType}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -87,7 +87,7 @@ const UserCat = () => {
 
         try {
           const response = await axios.get(
-            `http://${apiIp}:3000/tickets/drop/sub-category?id=${selectedCategory}`,
+            `http://${apiIp}/tickets/drop/sub-category?id=${selectedCategory}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -119,7 +119,7 @@ const UserCat = () => {
 
         try {
           const response = await axios.get(
-            `http://${apiIp}:3000/tickets/drop/item?id=${selectedSubcategory}`,
+            `http://${apiIp}/tickets/drop/item?id=${selectedSubcategory}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -168,7 +168,7 @@ const UserCat = () => {
       setCategoryAdded(true);
       axios
         .post(
-          `http://${apiIp}:3000/tickets/add/category`,
+          `http://${apiIp}/tickets/add/category`,
           { name: newCategory, type: requestType },
           {
             headers: {
@@ -219,7 +219,7 @@ const UserCat = () => {
       setSubCategoryAdded(true);
       axios
         .post(
-          `http://${apiIp}:3000/tickets/add/sub-category`,
+          `http://${apiIp}/tickets/add/sub-category`,
           { name: newSubcategory, id: Number(selectedCategory) },
           {
             headers: {
@@ -268,7 +268,7 @@ const UserCat = () => {
       setItemAdded(true);
       axios
         .post(
-          `http://${apiIp}:3000/tickets/add/item`,
+          `http://${apiIp}/tickets/add/item`,
           { name: newItem, id: Number(selectedSubcategory) },
           {
             headers: {

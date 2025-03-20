@@ -60,7 +60,7 @@ const PreviewSerIt = () => {
         try {
           // Fetch ticket details
           const ticketResponse = await axios.get(
-            `http://${apiIp}:3000/tickets/${id}`,
+            `http://${apiIp}/tickets/${id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -102,7 +102,7 @@ const PreviewSerIt = () => {
 
       try {
         const response = await axios.get(
-          `http://${apiIp}:3000/tickets/drop/category?type=Service`,
+          `http://${apiIp}/tickets/drop/category?type=Service`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -137,7 +137,7 @@ const PreviewSerIt = () => {
           const categoryObj = categories?.find((cat) => cat.label === category);
           if (categoryObj) {
             const response = await axios.get(
-              `http://${apiIp}:3000/tickets/drop/sub-category?id=${categoryObj.id}`,
+              `http://${apiIp}/tickets/drop/sub-category?id=${categoryObj.id}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -176,7 +176,7 @@ const PreviewSerIt = () => {
           );
           if (subcategoryObj) {
             const response = await axios.get(
-              `http://${apiIp}:3000/tickets/drop/item?id=${subcategoryObj.id}`,
+              `http://${apiIp}/tickets/drop/item?id=${subcategoryObj.id}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -235,7 +235,7 @@ const PreviewSerIt = () => {
 
     const token = localStorage.getItem("token");
     axios
-      .post(`http://${apiIp}:3000/tickets/${id}`, payload, {
+      .post(`http://${apiIp}/tickets/${id}`, payload, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

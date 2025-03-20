@@ -29,7 +29,7 @@ export const MediaUploader = ({
   onUploadSuccess,
   onUploadError,
   maxSizeMB = DEFAULT_MAX_SIZE,
-  uploadUrl = `http://${apiIp}:3000/media/upload`,
+  uploadUrl = `http://${apiIp}/media/upload`,
   acceptedFileTypes = DEFAULT_ACCEPTED_TYPES,
 }) => {
   const [uploadingFile, setUploadingFile] = useState(null);

@@ -27,10 +27,12 @@ import {
   useToast,
   HStack,
 } from "@chakra-ui/react";
+import { useAuth } from "../providers/authProvider";
 
 const apiIp = process.env.REACT_APP_API_IP;
 
 const IncidentRequestForm = () => {
+  const user = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
   const [description, setDescription] = useState("");
@@ -40,6 +42,7 @@ const IncidentRequestForm = () => {
   const [item, setItem] = useState("");
   const [attachmentId, setAttachmentId] = useState(null);
   const [fileName, setFileName] = useState(null);
+  const [userId, setUserId] = useState("");
 
   // States for fetched data
   const [categories, setCategories] = useState([]);
@@ -65,7 +68,7 @@ const IncidentRequestForm = () => {
 
       try {
         const response = await axios.get(
-          `http://${apiIp}:3000/tickets/drop/category?type=Incident`,
+          `http://${apiIp}/tickets/drop/category?type=Incident`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -74,7 +77,6 @@ const IncidentRequestForm = () => {
         );
         setCategories(response.data);
       } catch (error) {
-        
       } finally {
         setLoading((prev) => ({ ...prev, categories: false }));
       }
@@ -97,7 +99,7 @@ const IncidentRequestForm = () => {
 
         try {
           const response = await axios.get(
-            `http://${apiIp}:3000/tickets/drop/sub-category?id=${category}`,
+            `http://${apiIp}/tickets/drop/sub-category?id=${category}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -135,7 +137,7 @@ const IncidentRequestForm = () => {
 
         try {
           const response = await axios.get(
-            `http://${apiIp}:3000/tickets/drop/item?id=${subcategory}`,
+            `http://${apiIp}/tickets/drop/item?id=${subcategory}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -210,6 +212,7 @@ const IncidentRequestForm = () => {
     }
 
     const payload = {
+      userId: userId,
       query: description,
       priority: severity,
       subCategory: selectedSubcategory.label,
@@ -221,7 +224,7 @@ const IncidentRequestForm = () => {
 
     const token = localStorage.getItem("token");
     axios
-      .post(`http://${apiIp}:3000/tickets/create`, payload, {
+      .post(`http://${apiIp}/tickets/create`, payload, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -330,6 +333,18 @@ const IncidentRequestForm = () => {
               </Select>
             </FormControl>
 
+            {(user?.role === "admin" || user?.role === "it") && (
+              <FormControl isRequired>
+                <FormLabel>On Behalf of</FormLabel>
+                <Textarea
+                  placeholder="Create ticket on behalf of any user"
+                  value={userId}
+                  onChange={(e) => setUserId(e.target.value)}
+                  minH="120px"
+                />
+              </FormControl>
+            )}
+
             <FormControl isRequired>
               <FormLabel fontWeight="medium">Description</FormLabel>
               <Textarea
@@ -380,7 +395,7 @@ const IncidentRequestForm = () => {
                       console.error(error);
                     }}
                     maxSizeMB={10}
-                    uploadUrl={`http://${apiIp}:3000/media/upload`}
+                    uploadUrl={`http://${apiIp}/media/upload`}
                     acceptedFileTypes={[
                       "application/pdf",
                       "image/jpeg",
@@ -397,7 +412,7 @@ const IncidentRequestForm = () => {
 
         <Divider />
 
-        <HStack w="full"  justify="space-between" m={0} p={4}>
+        <HStack w="full" justify="space-between" m={0} p={4}>
           <Button
             colorScheme="gray"
             size="lg"

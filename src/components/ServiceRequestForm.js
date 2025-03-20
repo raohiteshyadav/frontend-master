@@ -65,7 +65,7 @@ const ServiceRequestForm = () => {
 
       try {
         const response = await axios.get(
-          `http://${apiIp}:3000/tickets/drop/category?type=Service`,
+          `http://${apiIp}/tickets/drop/category?type=Service`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -103,7 +103,7 @@ const ServiceRequestForm = () => {
 
         try {
           const response = await axios.get(
-            `http://${apiIp}:3000/tickets/drop/sub-category?id=${category}`,
+            `http://${apiIp}/tickets/drop/sub-category?id=${category}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -146,7 +146,7 @@ const ServiceRequestForm = () => {
 
         try {
           const response = await axios.get(
-            `http://${apiIp}:3000/tickets/drop/item?id=${subcategory}`,
+            `http://${apiIp}/tickets/drop/item?id=${subcategory}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -246,7 +246,7 @@ const ServiceRequestForm = () => {
 
     const token = localStorage.getItem("token");
     axios
-      .post(`http://${apiIp}:3000/tickets/create`, payload, {
+      .post(`http://${apiIp}/tickets/create`, payload, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -349,19 +349,9 @@ const ServiceRequestForm = () => {
                 minH="120px"
               />
             </FormControl>
-
-            <FormControl isRequired>
-              <FormLabel>Description </FormLabel>
-              <Textarea
-                placeholder="Enter request description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                minH="120px"
-              />
-            </FormControl>
             
             
-            {(user?.role=='it')&&
+            {((user?.role==='admin') || (user?.role==='it'))&&
               (<FormControl isRequired>
               <FormLabel>On Behalf of</FormLabel>
               <Textarea
@@ -388,7 +378,7 @@ const ServiceRequestForm = () => {
                     console.error(error);
                   }}
                   maxSizeMB={10}
-                  uploadUrl={`http://${apiIp}:3000/media/upload`}
+                  uploadUrl={`http://${apiIp}/media/upload`}
                   acceptedFileTypes={[
                     "application/pdf",
                     "image/jpeg",

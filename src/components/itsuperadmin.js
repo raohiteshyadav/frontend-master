@@ -112,7 +112,7 @@ const UserList = () => {
   const handlePostData = async () => {
     setIsUploading(true);
     try {
-      const response = await fetch(`http://${apiIp}:3000/user/bulk-user`, {
+      const response = await fetch(`http://${apiIp}/user/bulk-user`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -167,7 +167,7 @@ const UserList = () => {
     try {
       setIsUploading(true);
 
-      const response = await fetch(`http://${apiIp}:3000/user/bulk-user`, {
+      const response = await fetch(`http://${apiIp}/user/bulk-user`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -225,7 +225,7 @@ const UserList = () => {
       setIsChangingPassword(true);
 
       const response = await axios.post(
-        `http://${apiIp}:3000/user/reset-password`,
+        `http://${apiIp}/user/reset-password`,
         {
           id: passwordChangeId,
         },

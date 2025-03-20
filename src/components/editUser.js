@@ -39,7 +39,7 @@ const EditUser = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `http://${apiIp}:3000/user/info?id=${formData.id}`,
+          `http://${apiIp}/user/info?id=${formData.id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -89,7 +89,7 @@ const EditUser = () => {
   const handleDelete = async () => {
     try {
       const response = await axios.delete(
-        `http://${apiIp}:3000/user/edit-user/${formData.id}`,
+        `http://${apiIp}/user/edit-user/${formData.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -121,7 +121,7 @@ const EditUser = () => {
     setLoading(true);
     try {
       const response = await axios.put(
-        `http://${apiIp}:3000/user/edit-user`,
+        `http://${apiIp}/user/edit-user`,
         formData,
         {
           headers: {

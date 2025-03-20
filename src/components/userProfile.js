@@ -48,7 +48,7 @@ export const UserProfile = ({ user }) => {
       setIsChangingPassword(true);
       // Call your API to change the password
       const response = await axios.post(
-        `http://${apiIp}:3000/user/change-password`,
+        `http://${apiIp}/user/change-password`,
         {
           password: newPassword,
         },

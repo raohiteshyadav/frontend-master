@@ -32,7 +32,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`http://${apiIp}:3000/user/send-otp`, {
+      const response = await fetch(`http://${apiIp}/user/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -58,7 +58,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`http://${apiIp}:3000/user/verify-otp`, {
+      const response = await fetch(`http://${apiIp}/user/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, passkey: otp }),
@@ -89,7 +89,8 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`http://${apiIp}:3000/user/verify-pass`, {
+      console.log("adfsrgdtfygujfyujthewerthyju");
+      const response = await fetch(`http://${apiIp}/user/verify-pass`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, passkey :  password }),

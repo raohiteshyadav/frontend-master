@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        const response = await axios.get(`http://${apiIp}:3000/user/basic`, {
+        const response = await axios.get(`http://${apiIp}/user/basic`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

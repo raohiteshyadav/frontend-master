@@ -29,7 +29,7 @@ const extractFileName = (contentDisposition) => {
 
 const MediaPreview = ({
   mediaId,
-  baseUrl = `http://${apiIp}:3000`,
+  baseUrl = `http://${apiIp}`,
 }) => {
   const [mediaState, setMediaState] = useState({
     data: null,

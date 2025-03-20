@@ -38,7 +38,7 @@ const Raise = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `http://${apiIp}:3000/tickets/list?pageNumber=${currentPage}&pageSize=${pageSize}`,
+        `http://${apiIp}/tickets/list?pageNumber=${currentPage}&pageSize=${pageSize}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -69,108 +69,6 @@ const Raise = () => {
       bg="gray.50"
       minH="100vh"
     >
-      {/* <Container maxW="7xl" p={0} m={0} mb={6}>
-        <Stack
-          direction={{ base: "column", md: "row" }}
-          spacing={{ base: 4, md: 8 }}
-          align="center"
-          justify="center"
-          bg="white"
-          p={4}
-          borderRadius="xl"
-          shadow="lg"
-          w="full"
-        >
-          <VStack spacing={4} align="center" w={{ base: "full", md: "auto" }}>
-            <Avatar
-              name={user?.name || "Guest"}
-              size="2xl"
-              bg="teal.500"
-              color="white"
-              shadow="lg"
-            />
-            <Text fontSize="2xl" fontWeight="bold" color="teal.600">
-              {user?.name || "Guest"}
-            </Text>
-          </VStack>
-
-          <Divider
-            orientation={{ base: "horizontal", md: "vertical" }}
-            h={{ base: "1px", md: "120px" }}
-          />
-
-          <VStack
-            spacing={4}
-            align="start"
-            flex={1}
-            align-item="flex-start"
-            width={["full", "full", "auto"]}
-          >
-            <Box>
-              <Text color="gray.500" fontSize="sm">
-                Email
-              </Text>
-              <Text fontSize="md" fontWeight="medium">
-                {user?.email || "N/A"}
-              </Text>
-            </Box>
-            <Box>
-              <Text color="gray.500" fontSize="sm">
-                EmployeeID
-              </Text>
-              <Text fontSize="md" fontWeight="medium">
-                {user?.id || "N/A"}
-              </Text>
-            </Box>
-            <Box>
-              <Text color="gray.500" fontSize="sm">
-                Role
-              </Text>
-              <Text fontSize="md" fontWeight="medium">
-                {user?.role || "N/A"}
-              </Text>
-            </Box>
-          </VStack>
-
-          <Divider
-            orientation={{ base: "horizontal", md: "vertical" }}
-            h={{ base: "1px", md: "120px" }}
-          />
-
-          <VStack
-            spacing={4}
-            align="start"
-            flex={1}
-            align-item="flex-start"
-            width={["full", "full", "auto"]}
-          >
-            <Box>
-              <Text color="gray.500" fontSize="sm">
-                Reporting Manager
-              </Text>
-              <Text fontSize="md" fontWeight="medium">
-                {user?.reportingTo || "N/A"}
-              </Text>
-            </Box>
-            <Box>
-              <Text color="gray.500" fontSize="sm">
-                Department
-              </Text>
-              <Text fontSize="md" fontWeight="medium">
-                {user?.department || "N/A"}
-              </Text>
-            </Box>
-            <Box>
-              <Text color="gray.500" fontSize="sm">
-                Contact Number
-              </Text>
-              <Text fontSize="md" fontWeight="medium">
-                {user?.contact || "N/A"}
-              </Text>
-            </Box>
-          </VStack>
-        </Stack>
-      </Container> */}
       <UserProfile user={user}/>
       <Stack
         direction={{ base: "column", md: "row" }}

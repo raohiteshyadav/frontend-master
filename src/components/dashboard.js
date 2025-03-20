@@ -69,7 +69,7 @@ const Dashboard = () => {
     }
     try {
       const response = await axios.get(
-        `http://${apiIp}:3000/user/users?searchText=${inputValue}`,
+        `http://${apiIp}/user/users?searchText=${inputValue}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -87,7 +87,7 @@ const Dashboard = () => {
   const fetchItUser = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`http://${apiIp}:3000/user/it-users`, {
+      const response = await axios.get(`http://${apiIp}/user/it-users`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -109,7 +109,7 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `http://${apiIp}:3000/tickets/it?pageNumber=${currentPage}&pageSize=${pageSize}` +
+        `http://${apiIp}/tickets/it?pageNumber=${currentPage}&pageSize=${pageSize}` +
           (filterDate ? `&date=${filterDate}` : "") +
           (filterType !== "all" ? `&type=${filterType}` : "") +
           (filterIt !== "all" ? `&it=${filterIt}` : "") +
@@ -135,7 +135,7 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `http://${apiIp}:3000/tickets/dashboard?dummy=dummy` +
+        `http://${apiIp}/tickets/dashboard?dummy=dummy` +
           (filterDate ? `&date=${filterDate}` : "") +
           (filterIt !== "all" ? `&it=${filterIt}` : ""),
         {
