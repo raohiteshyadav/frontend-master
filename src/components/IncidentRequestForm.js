@@ -26,6 +26,7 @@ import {
   useColorModeValue,
   useToast,
   HStack,
+  Input,
 } from "@chakra-ui/react";
 import { useAuth } from "../providers/authProvider";
 
@@ -43,6 +44,7 @@ const IncidentRequestForm = () => {
   const [attachmentId, setAttachmentId] = useState(null);
   const [fileName, setFileName] = useState(null);
   const [userId, setUserId] = useState("");
+  const [name, setName]=useState("");
 
   // States for fetched data
   const [categories, setCategories] = useState([]);
@@ -61,6 +63,31 @@ const IncidentRequestForm = () => {
   const requiredColor = "red.500";
 
   // Fetch categories on component mount
+
+    const handleCreatedBy = async (createdById) => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `http://${apiIp}/user/info?id=${createdById}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+  
+        if (response.data && response.data.name) {
+          setName(response.data.name); 
+        } else {
+          setName(''); 
+        }
+      } catch (err) {
+        console.error("Error in getting user details", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
   useEffect(() => {
     const fetchCategories = async () => {
       setLoading((prev) => ({ ...prev, categories: true }));
@@ -356,6 +383,34 @@ const IncidentRequestForm = () => {
                 size="md"
               />
             </FormControl>
+
+            {(user?.role === "admin" || user?.role === "it") && (
+              <FormControl>
+                <FormLabel>On Behalf of</FormLabel>
+                <Flex align="center">
+                  <Input
+                    placeholder="Employee id of third person"
+                    value={userId}
+                    onChange={(e) => {
+                      setUserId(e.target.value);
+                      handleCreatedBy(e.target.value);
+                    }}
+                    minH="40px"
+                    maxW="200px"
+                  />
+                  {name ? (
+                    <Text ml="10px">
+                      You are creating a ticket on behalf of{" "}
+                      <Text as="span" fontWeight="bold">
+                        {name}
+                      </Text>
+                    </Text>
+                  ) : (
+                    <Text ml="10px">User not found</Text>
+                  )}
+                </Flex>
+              </FormControl>
+            )}
 
             <FormControl>
               <FormLabel fontWeight="medium">Attach File (Optional)</FormLabel>

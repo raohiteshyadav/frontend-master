@@ -21,6 +21,7 @@ import {
   HStack,
   IconButton,
   useColorModeValue,
+  Input,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -34,7 +35,7 @@ const apiIp = process.env.REACT_APP_API_IP;
 const ServiceRequestForm = () => {
   const navigate = useNavigate();
   const toast = useToast();
-  const user=useAuth();
+  const user = useAuth();
 
   // Form state
   const [description, setDescription] = useState("");
@@ -43,19 +44,44 @@ const ServiceRequestForm = () => {
   const [subcategory, setSubcategory] = useState("");
   const [item, setItem] = useState("");
   const [attachmentId, setAttachmentId] = useState(null);
-  const [fileName,setFileName]=useState("");
+  const [userId, setUserId] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [name, setName] = useState("");
 
   // States for fetched data
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
-  const [userId,setUserId] = useState("");
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState({
     categories: false,
     subcategories: false,
     items: false,
   });
-   const headingColor = useColorModeValue("teal.600", "teal.200");
+  const headingColor = useColorModeValue("teal.600", "teal.200");
+
+  const handleCreatedBy = async (createdById) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `http://${apiIp}/user/info?id=${createdById}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data && response.data.name) {
+        setName(response.data.name); 
+      } else {
+        setName(''); 
+      }
+    } catch (err) {
+      console.error("Error in getting user details", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -234,7 +260,7 @@ const ServiceRequestForm = () => {
     }
 
     const payload = {
-      userId:userId,
+      userId: userId,
       query: description,
       priority: severity,
       subCategory: selectedSubcategory.label,
@@ -349,18 +375,32 @@ const ServiceRequestForm = () => {
                 minH="120px"
               />
             </FormControl>
-            
-            
-            {((user?.role==='admin') || (user?.role==='it'))&&
-              (<FormControl isRequired>
-              <FormLabel>On Behalf of</FormLabel>
-              <Textarea
-                placeholder="Create ticket on behalf of any user"
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-                minH="120px"
-              />
-            </FormControl>)}
+
+            {(user?.role === "admin" || user?.role === "it") && (
+              <FormControl>
+                <FormLabel>On Behalf of</FormLabel>
+                <Flex align="center">
+                  <Input
+                    placeholder="Employee id of third person"
+                    value={userId}
+                    onChange={(e) => {
+                      setUserId(e.target.value);
+                      handleCreatedBy(e.target.value);
+                    }}
+                    minH="40px"
+                    maxW="200px"
+                  />
+                  {name ? (
+                    <Text ml="10px">
+                    You are creating a ticket on behalf of{" "}
+                    <Text as="span" fontWeight="bold">{name}</Text>
+                  </Text>
+                  ) : (
+                    <Text ml="10px">User not found</Text> 
+                  )}
+                </Flex>
+              </FormControl>
+            )}
 
             {!attachmentId ? (
               <FormControl>
