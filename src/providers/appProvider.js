@@ -6,7 +6,6 @@ import { Toaster } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 
 const queryClient = new QueryClient();
-//const theme = extendTheme({});
 const AppProviders = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>

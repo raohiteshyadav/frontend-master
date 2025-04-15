@@ -30,7 +30,7 @@ const ManagerHome = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const pageSize = 5;
+  const pageSize = 25;
   const [lists, setLists] = useState([]);
   const [loading, setLoading] = useState(false);
   const user = useAuth();
@@ -176,8 +176,8 @@ const ManagerHome = () => {
         </Stack>
       </Container> */}
       <UserProfile user ={user}/>
-      <Card w="full" maxW="7xl" shadow="md" borderRadius="xl" overflow="hidden">
-        <CardBody position="relative" pb={16}>
+      <Card w="full" maxW="7xl" shadow="md" borderRadius="xl" >
+        <CardBody position="relative" pb={2}>
           <Box overflowX="auto">
             <Table variant="simple">
               <Thead bg="gray.50">
@@ -222,14 +222,15 @@ const ManagerHome = () => {
           </Box>
 
           <Box
-            position="absolute"
-            bottom={4}
+            position="sticky"
+            bottom={0}
             left={0}
             right={0}
             display="flex"
+            bg={'white'}
             justifyContent="space-between"
             alignItems="center"
-            px={6}
+            p={2}
           >
             <IconButton
               icon={<ChevronLeft />}

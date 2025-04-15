@@ -1,6 +1,10 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
+  "name": "ticketingtool-hitesh-harish",
+  "author": {
+    "name": "Hitesh and Harish",
+    "url": "https://www.linkedin.com"
+  },
+  "version": "5.2.9",
   "private": true,
   "dependencies": {
     "@chakra-ui/icons": "^2.2.4",
@@ -9,6 +13,7 @@
     "@emotion/styled": "^11.14.0",
     "@tanstack/react-query": "^5.66.0",
     "axios": "^1.7.9",
+    "canvas-confetti": "^1.9.3",
     "cra-template": "1.2.0",
     "dotenv": "^16.4.7",
     "framer-motion": "^12.0.5",

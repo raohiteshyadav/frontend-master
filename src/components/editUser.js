@@ -12,6 +12,7 @@ import {
   TabPanel,
   InputGroup,
   InputRightElement,
+  Stack,
 } from "@chakra-ui/react";
 import { FiUserPlus } from "react-icons/fi";
 import axios from "axios";
@@ -55,7 +56,6 @@ const EditUser = () => {
           department: data.department,
           reportingTo: data.reportingToId,
           role: data.role,
-          // Note: Password typically wouldn't be returned from the server
         }));
       } catch (err) {
         setFormData((prev) => ({
@@ -153,6 +153,7 @@ const EditUser = () => {
   return (
     <>
       <VStack spacing={6}>
+      <Stack w={'full'} gap={4} display={{ base: 'box', md: 'flex' }} direction={{ base: 'column', md: 'row' }}>
         <FormControl isRequired>
           <FormLabel>Employee Id</FormLabel>
           <InputGroup>
@@ -179,7 +180,9 @@ const EditUser = () => {
             variant="filled"
           />
         </FormControl>
+      </Stack>
 
+      <Stack w={'full'} gap={4} display={{ base: 'box', md: 'flex' }} direction={{ base: 'column', md: 'row' }}>
         <FormControl>
           <FormLabel>Email</FormLabel>
           <Input
@@ -202,7 +205,9 @@ const EditUser = () => {
             variant="filled"
           />
         </FormControl>
+        </Stack>
 
+        <Stack w={'full'} gap={4} display={{ base: 'box', md: 'flex' }} direction={{ base: 'column', md: 'row' }}>
         <FormControl isRequired>
           <FormLabel>Department</FormLabel>
           <Input
@@ -224,6 +229,7 @@ const EditUser = () => {
             variant="filled"
           />
         </FormControl>
+        </Stack>
 
         <FormControl isRequired>
           <FormLabel>Role</FormLabel>
@@ -240,7 +246,6 @@ const EditUser = () => {
             <option value="it">IT Department</option>
             <option value="head">Manager</option>
             <option value="employee">Employee</option>
-            {/* Add more contact options as needed */}
           </Select>
         </FormControl>
 

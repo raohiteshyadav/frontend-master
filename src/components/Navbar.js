@@ -1,177 +1,224 @@
-import { Menu } from "lucide-react";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
+import { Menu, User, Home, PhoneCall, ShieldCheckIcon, FileText } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import styled from "styled-components";
-import { Image, Box, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Image,
+  Text,
+  IconButton,
+  Collapse,
+  useDisclosure,
+  useColorModeValue,
+  Button,
+  VStack,
+  HStack,
+  Divider,
+  useBreakpointValue
+} from "@chakra-ui/react";
 import LogoutButton from "./logout";
 import { useAuth } from "../providers/authProvider";
 
 const Navbar = () => {
+  const { isOpen, onToggle } = useDisclosure();
   const user = useAuth();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const navbarRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const navbarRef = useRef(null);
+
+  const bgColor = useColorModeValue("#1a202c", "#2D3748");
+  const titleGradient = "linear(to-r, orange.400, white, green.400)";
+  const mobileView = useBreakpointValue({ base: true, md: false });
+  const displayTitle = useBreakpointValue({ base: false, md: false, lg: true });
+  const selectedItem = window.location.pathname;
+  const tabMapping = {
+    'Raise A Ticket': '/raise-a-ticket',
+    'Contact Us': '/contact',
+    'IT Dept': '/home',
+    'IT Head': '/home',
+    'Super-Admin': '/superadmin',
   };
+
   const handleClickOutside = (event) => {
-    if (navbarRef.current && !navbarRef.current.contains(event.target)) {
-      setIsMenuOpen(false);
+    if (navbarRef.current && !navbarRef.current.contains(event.target) && isOpen) {
+      onToggle();
     }
   };
+
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, []);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen) onToggle();
+  }, [location.pathname]);
 
   const isLoginPage = location.pathname === "/login";
 
+  const getNavItems = () => {
+    const items = [];
+
+    if (!(user?.role === "employee" || user?.role === "head" || !user) && !isLoginPage) {
+      items.push({
+        label: user?.role === "admin" ? "IT Head" : "IT Dept",
+        icon: <Home size={18} />,
+        onClick: () => navigate(user?.role === "admin" ? "/" : "/home")
+      });
+    }
+
+    if (user && (user?.role === "it" || user?.role === "admin") && !isLoginPage) {
+      items.push({
+        label: "Super-Admin",
+        icon: <ShieldCheckIcon size={18} />,
+        onClick: () => navigate("/superadmin")
+      });
+    }
+
+    if (user && !isLoginPage) {
+      items.push({
+        label: "Raise A Ticket",
+        icon: <FileText size={18} />,
+        onClick: () => navigate("/raise-a-ticket")
+      });
+    }
+
+    if (user && user?.role !== "employee" && user?.role !== "it" && !isLoginPage) {
+      items.push({
+        label: "Approval",
+        icon: <User size={18} />,
+        onClick: () => navigate("/approval")
+      });
+    }
+
+    items.push({
+      label: "Contact Us",
+      icon: <PhoneCall size={18} />,
+      onClick: () => navigate("/contact")
+    });
+
+    return items;
+  };
+
+  const navItems = getNavItems();
+
   return (
-    <Nav display={"flex"} ref={navbarRef}>
-      <Image
-        marginLeft={"0"}
-        src="https://blackbucks-media.s3.ap-south-1.amazonaws.com/Rashmi%20group%20logo%20White%20Bar-1738846415526.png"
-        alt=""
-        maxWidth={"170px"}
-        height="auto"
-        objectFit="contain"
-        display="block"
-        userSelect={"none"}
-        onContextMenu={(e) => e.preventDefault()}
-        draggable={false}
-        //mt={-3}
-        zIndex={999}
-      />
-
-      <Text
-        display={["none", "none", "none", "none", "inline-block"]}
-        fontWeight="bold"
-        fontSize="3xl"
-        bgGradient="linear(to-r, orange.500, white, green.500)"
-        bgClip="text"
+    <Box ref={navbarRef} position="sticky" top={0} zIndex={100}>
+      <Flex
+        bg={bgColor}
+        color="white"
+        minH="60px"
+        py={2}
+        px={4}
+        align="center"
+        justify="space-between"
+        borderBottom="1px"
+        borderColor="gray.700"
+        boxShadow="md"
       >
-        IT SELF SERVICE PORTAL
-      </Text>
+        <Flex align="center">
+          <Image
+            src="/logo.png"
+            alt=""
+            maxW={{ base: "130px", md: "130px" }}
+            h="auto"
+            objectFit="contain"
+            userSelect="none"
+            onClick={() => navigate('/raise-a-ticket')}
+            cursor={'pointer'}
+            onContextMenu={(e) => e.preventDefault()}
+            draggable={false}
+          />
 
-      <MenuToggle onClick={toggleMenu}>
-        <Menu isOpen={isMenuOpen} />
-      </MenuToggle>
-      <NavLinks isOpen={isMenuOpen}>
-        {!(user?.role === "employee" || user?.role === "head") && !isLoginPage && (
-          <NavLink
-            onClick={() => {
-              user.role === "admin" ? navigate("/") : navigate("/home");
-              toggleMenu();
-            }}
-          >
-            {user?.role === "admin" ? "IT Head" : "IT Dept"}
-          </NavLink>
-        )}
-        {(user?.role === "it" || user?.role === "admin") && !isLoginPage && (
-          <NavLink
-            onClick={() => {
-              navigate("/superadmin");
-              toggleMenu();
-            }}
-          >
-            Super-Admin
-          </NavLink>
-        )}
-        { !isLoginPage &&<NavLink
-          onClick={() => {
-            navigate("/raise-a-ticket");
-            toggleMenu();
-          }}
+          {displayTitle && (
+            <Text
+              ml={4}
+              fontWeight="bold"
+              fontSize={{ lg: "2xl", xl: "3xl" }}
+              bgGradient={titleGradient}
+              bgClip="text"
+              userSelect={'none'}
+              letterSpacing="wide"
+            >
+              IT SELF SERVICE PORTAL
+            </Text>
+          )}
+        </Flex>
+        <IconButton
+          border={'2px solid white'}
+          display={{ base: "flex", md: "none" }}
+          onClick={onToggle}
+          p={0}
+          m={0}
+          icon={<Menu size={24} />}
+          variant="ghost"
+          aria-label="Toggle Navigation"
+          color="white"
+          _hover={{ bg: "whiteAlpha.200" }}
+        />
+
+        <HStack spacing={5} display={{ base: "none", md: "flex" }}>
+          {navItems.map((item, index) => (
+            // <Tooltip key={index} label={item.label} placement="bottom" hasArrow>
+              <Button
+                variant="ghost"
+                leftIcon={item.icon}
+                onClick={item.onClick}
+                color={tabMapping[item.label] == selectedItem ? "#2D2E2E" : "#fbfbfb"}
+                bg={tabMapping[item.label] == selectedItem ? "#fbfbfb" : "none"}
+                _hover={{ bg: "#fbfbfb", color:"#2D2E2E" }}
+                size="sm"
+                px={2}
+              >
+                {item.label}
+              </Button> 
+            // </Tooltip>
+          ))}
+
+          {!isLoginPage && (
+            <LogoutButton />
+          )}
+        </HStack>
+      </Flex>
+
+      <Collapse in={isOpen} animateOpacity>
+        <VStack
+          bg={bgColor}
+          p={4}
+          display={{ md: "none" }}
+          spacing={4}
+          divider={<Divider borderColor="gray.700" />}
+          align="stretch"
+          boxShadow="md"
+          zIndex={100}
         >
-          Raise A Ticket
-        </NavLink>}
-        {user?.role != "employee" && user?.role!= "it" && !isLoginPage && (
-          <NavLink
-            onClick={() => {
-              navigate("/approval");
-              toggleMenu();
-            }}
-          >
-            Approval
-          </NavLink>
-        )}
-        <NavLink
-          onClick={() => {
-            navigate("/contact");
-            toggleMenu();
-          }}
-        >
-          Contact Us
-        </NavLink>
-        <NavLink>
-          <LogoutButton />
-        </NavLink>
-      </NavLinks>
-    </Nav>
+          {navItems.map((item, index) => (
+            <Button
+              key={index}
+              variant="ghost"
+              leftIcon={item.icon}
+              onClick={item.onClick}
+              justifyContent="flex-start"
+              color={tabMapping[item.label] == selectedItem ? "cyan" : "white"}
+              bg={tabMapping[item.label] == selectedItem ? "whiteAlpha.200" : "none"}
+              _hover={{ bg: "whiteAlpha.200" }}
+              size="md"
+            >
+              {item.label}
+            </Button>
+          ))}
+
+          {!isLoginPage && (
+            <Box pt={2}>
+              <LogoutButton fullWidth={true} />
+            </Box>
+          )}
+        </VStack>
+      </Collapse>
+    </Box>
   );
 };
-
-const Nav = styled.nav`
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0px 20px;
-  background-color: #333;
-  color: white;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-sizing: border-box;
-`;
-
-const MenuToggle = styled.div`
-  display: none;
-  cursor: pointer;
-
-  @media (max-width: 768px) {
-    display: block;
-  }
-`;
-
-const NavLinks = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 20px;
-
-  @media (max-width: 768px) {
-    display: ${({ isOpen }) => (isOpen ? "flex" : "none")};
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top: 60px;
-    left: 0;
-    background-color: #333;
-    width: 100%;
-    padding: 20px;
-    gap: 10px;
-    box-sizing: border-box;
-  }
-`;
-
-const NavLink = styled.a`
-  color: white;
-  text-decoration: none;
-  font-size: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  padding: 2px;
-
-  &:hover {
-    color: #007bff;
-    cursor: pointer;
-  }
-`;
 
 export default Navbar;

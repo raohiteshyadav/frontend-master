@@ -12,13 +12,15 @@ import {
   GridItem,
   Spinner,
   useToast,
-  Container,
-  Heading,
   InputGroup,
   InputRightElement,
   Divider,
+  CardHeader,
+  Flex,
+  Text,
 } from "@chakra-ui/react";
 import axios from "axios";
+import { Tag } from "lucide-react";
 
 const UserCat = () => {
   const [requestType, setRequestType] = useState("");
@@ -296,236 +298,232 @@ const UserCat = () => {
   };
 
   return (
-    <Container maxW="container.xl" py={8}>
-      <Box
-        bg="white"
-        p={8}
-        borderRadius="lg"
-        boxShadow="lg"
-        border="1px"
-        borderColor="gray.200"
-      >
-        <VStack spacing={8} align="stretch">
-          <Heading size="lg" textAlign="center" color="gray.700">
-            Category Management
-          </Heading>
+    <Box
+      bg="white"
+      borderRadius="lg"
+      boxShadow="lg"
+      border="1px"
+      borderColor="gray.200"
+    >
+      <VStack spacing={8} align="stretch">
+        <CardHeader borderBottom={'1px solid gray'}>
+          <Flex align="center" gap={2}>
+            <Tag size="24px" />
+            <Text fontSize="3xl">Category Management</Text>
+          </Flex>
+        </CardHeader>
 
-          {/* Request Type Section */}
-          <Box>
-            <Grid
-              templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
-              gap={6}
-              alignItems="flex-end"
-            >
-              <GridItem>
-                <FormControl>
-                  <FormLabel fontWeight="medium">Request Type</FormLabel>
-                  <Select
-                    value={requestType}
-                    onChange={handleRequestTypeChange}
-                    placeholder="Select Request Type"
-                    h="40px"
-                  >
-                    <option value="Service">Service</option>
-                    <option value="Incident">Incident</option>
-                  </Select>
-                </FormControl>
-              </GridItem>
-
-              <GridItem>
-                <FormControl>
-                  <FormLabel fontWeight="medium">Add Category</FormLabel>
-                  <InputGroup>
-                    <Input
-                      value={newCategory}
-                      onChange={(e) => setNewCategory(e.target.value)}
-                      placeholder="Enter New Category"
-                      isDisabled={!requestType}
-                      h="40px"
-                    />
-                  </InputGroup>
-                </FormControl>
-              </GridItem>
-
-              <GridItem>
-                <Button
-                  onClick={handleAddCategory}
-                  colorScheme="blue"
-                  isDisabled={!requestType || !newCategory.trim()}
-                  w="full"
+        <Box p={4}>
+          <Grid
+            templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
+            gap={6}
+            alignItems="flex-end"
+          >
+            <GridItem>
+              <FormControl>
+                <FormLabel fontWeight="medium">Request Type</FormLabel>
+                <Select
+                  value={requestType}
+                  onChange={handleRequestTypeChange}
+                  placeholder="Select Request Type"
                   h="40px"
-                  isLoading={categoryAdded}
-                  spinner={<Spinner size="sm" />}
                 >
-                  Add Category
-                </Button>
-              </GridItem>
-            </Grid>
-          </Box>
+                  <option value="Service">Service</option>
+                  <option value="Incident">Incident</option>
+                </Select>
+              </FormControl>
+            </GridItem>
 
-          <Divider />
-
-          {/* Category Section */}
-          <Box>
-            <Grid
-              templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
-              gap={6}
-              alignItems="flex-end"
-            >
-              <GridItem>
-                <FormControl>
-                  <FormLabel fontWeight="medium">Category</FormLabel>
-                  <Select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    placeholder="Select Category"
-                    isDisabled={!requestType || loadingCategories}
-                    h="40px"
-                  >
-                    {loadingCategories ? (
-                      <option>Loading...</option>
-                    ) : (
-                      categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                          {category.label}
-                        </option>
-                      ))
-                    )}
-                  </Select>
-                </FormControl>
-              </GridItem>
-
-              <GridItem>
-                <FormControl>
-                  <FormLabel fontWeight="medium">Add Subcategory</FormLabel>
+            <GridItem>
+              <FormControl>
+                <FormLabel fontWeight="medium">Add Category</FormLabel>
+                <InputGroup>
                   <Input
-                    value={newSubcategory}
-                    onChange={(e) => setNewSubcategory(e.target.value)}
-                    placeholder="Enter New Subcategory"
-                    isDisabled={!selectedCategory || loadingSubcategories}
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value)}
+                    placeholder="Enter New Category"
+                    isDisabled={!requestType}
                     h="40px"
                   />
-                </FormControl>
-              </GridItem>
+                </InputGroup>
+              </FormControl>
+            </GridItem>
 
-              <GridItem>
-                <Button
-                  onClick={handleAddSubcategory}
-                  colorScheme="blue"
-                  isDisabled={!selectedCategory || loadingSubcategories || !newSubcategory}
-                  w="full"
+            <GridItem>
+              <Button
+                onClick={handleAddCategory}
+                colorScheme="blue"
+                isDisabled={!requestType || !newCategory.trim()}
+                w="full"
+                h="40px"
+                isLoading={categoryAdded}
+                spinner={<Spinner size="sm" />}
+              >
+                Add Category
+              </Button>
+            </GridItem>
+          </Grid>
+        </Box>
+
+        <Divider />
+
+        <Box p={4}>
+          <Grid
+            templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
+            gap={6}
+            alignItems="flex-end"
+          >
+            <GridItem>
+              <FormControl>
+                <FormLabel fontWeight="medium">Category</FormLabel>
+                <Select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  placeholder="Select Category"
+                  isDisabled={!requestType || loadingCategories}
                   h="40px"
-                  isLoading={subCategoryAdded}
-                  spinner={<Spinner size="sm" />}
                 >
-                  Add Subcategory
-                </Button>
-              </GridItem>
-            </Grid>
-          </Box>
+                  {loadingCategories ? (
+                    <option>Loading...</option>
+                  ) : (
+                    categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.label}
+                      </option>
+                    ))
+                  )}
+                </Select>
+              </FormControl>
+            </GridItem>
 
-          <Divider />
+            <GridItem>
+              <FormControl>
+                <FormLabel fontWeight="medium">Add Subcategory</FormLabel>
+                <Input
+                  value={newSubcategory}
+                  onChange={(e) => setNewSubcategory(e.target.value)}
+                  placeholder="Enter New Subcategory"
+                  isDisabled={!selectedCategory || loadingSubcategories}
+                  h="40px"
+                />
+              </FormControl>
+            </GridItem>
 
-          {/* Subcategory Section */}
-          <Box>
-            <Grid
-              templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
-              gap={6}
-              alignItems="flex-end"
-            >
-              <GridItem>
-                <FormControl>
-                  <FormLabel fontWeight="medium">Subcategory</FormLabel>
-                  <Select
-                    value={selectedSubcategory}
-                    onChange={(e) => setSelectedSubcategory(e.target.value)}
-                    placeholder="Select Subcategory"
-                    isDisabled={
-                      !selectedCategory ||
-                      loadingSubcategories ||
-                      !subcategories.length
-                    }
-                    h="40px"
-                  >
-                    {loadingSubcategories ? (
-                      <option>Loading...</option>
-                    ) : (
-                      subcategories.map((subcategory) => (
-                        <option key={subcategory.id} value={subcategory.id}>
-                          {subcategory.label}
-                        </option>
-                      ))
-                    )}
-                  </Select>
-                </FormControl>
-              </GridItem>
+            <GridItem>
+              <Button
+                onClick={handleAddSubcategory}
+                colorScheme="blue"
+                isDisabled={!selectedCategory || loadingSubcategories || !newSubcategory}
+                w="full"
+                h="40px"
+                isLoading={subCategoryAdded}
+                spinner={<Spinner size="sm" />}
+              >
+                Add Subcategory
+              </Button>
+            </GridItem>
+          </Grid>
+        </Box>
 
-              <GridItem>
-                <FormControl>
-                  <FormLabel fontWeight="medium">Add Item</FormLabel>
-                  <Input
-                    value={newItem}
-                    onChange={(e) => setNewItem(e.target.value)}
-                    placeholder="Enter New Item"
-                    isDisabled={!selectedSubcategory || loadingItems}
-                    h="40px"
-                  />
-                </FormControl>
-              </GridItem>
+        <Divider />
 
-              <GridItem>
-                <Button
-                  onClick={handleAddItem}
-                  colorScheme="blue"
+        <Box p={4}>
+          <Grid
+            templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
+            gap={6}
+            alignItems="flex-end"
+          >
+            <GridItem>
+              <FormControl>
+                <FormLabel fontWeight="medium">Subcategory</FormLabel>
+                <Select
+                  value={selectedSubcategory}
+                  onChange={(e) => setSelectedSubcategory(e.target.value)}
+                  placeholder="Select Subcategory"
+                  isDisabled={
+                    !selectedCategory ||
+                    loadingSubcategories ||
+                    !subcategories.length
+                  }
+                  h="40px"
+                >
+                  {loadingSubcategories ? (
+                    <option>Loading...</option>
+                  ) : (
+                    subcategories.map((subcategory) => (
+                      <option key={subcategory.id} value={subcategory.id}>
+                        {subcategory.label}
+                      </option>
+                    ))
+                  )}
+                </Select>
+              </FormControl>
+            </GridItem>
+
+            <GridItem>
+              <FormControl>
+                <FormLabel fontWeight="medium">Add Item</FormLabel>
+                <Input
+                  value={newItem}
+                  onChange={(e) => setNewItem(e.target.value)}
+                  placeholder="Enter New Item"
                   isDisabled={!selectedSubcategory || loadingItems}
-                  w="full"
                   h="40px"
-                  isLoading={itemAdded}
-                  spinner={<Spinner size="sm" />}
+                />
+              </FormControl>
+            </GridItem>
+
+            <GridItem>
+              <Button
+                onClick={handleAddItem}
+                colorScheme="blue"
+                isDisabled={!selectedSubcategory || loadingItems}
+                w="full"
+                h="40px"
+                isLoading={itemAdded}
+                spinner={<Spinner size="sm" />}
+              >
+                Add Item
+              </Button>
+            </GridItem>
+          </Grid>
+        </Box>
+
+        <Divider />
+
+        <Box p={4}>
+          <Grid
+            templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
+            gap={6}
+          >
+            <GridItem colSpan={{ base: 1, md: 3 }}>
+              <FormControl>
+                <FormLabel fontWeight="medium">Item</FormLabel>
+                <Select
+                  value={selectedItem}
+                  onChange={(e) => setSelectedItem(e.target.value)}
+                  placeholder="Select Item"
+                  isDisabled={
+                    !selectedSubcategory || loadingItems || !items.length
+                  }
+                  h="40px"
                 >
-                  Add Item
-                </Button>
-              </GridItem>
-            </Grid>
-          </Box>
-
-          <Divider />
-
-          {/* Item Section */}
-          <Box>
-            <Grid
-              templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
-              gap={6}
-            >
-              <GridItem colSpan={{ base: 1, md: 3 }}>
-                <FormControl>
-                  <FormLabel fontWeight="medium">Item</FormLabel>
-                  <Select
-                    value={selectedItem}
-                    onChange={(e) => setSelectedItem(e.target.value)}
-                    placeholder="Select Item"
-                    isDisabled={
-                      !selectedSubcategory || loadingItems || !items.length
-                    }
-                    h="40px"
-                  >
-                    {loadingItems ? (
-                      <option>Loading...</option>
-                    ) : (
-                      items.map((item) => (
-                        <option key={item.id} value={item.id}>
-                          {item.label}
-                        </option>
-                      ))
-                    )}
-                  </Select>
-                </FormControl>
-              </GridItem>
-            </Grid>
-          </Box>
-        </VStack>
-      </Box>
-    </Container>
+                  {loadingItems ? (
+                    <option>Loading...</option>
+                  ) : (
+                    items.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.label}
+                      </option>
+                    ))
+                  )}
+                </Select>
+              </FormControl>
+            </GridItem>
+          </Grid>
+        </Box>
+      </VStack>
+    </Box>
   );
 };
 

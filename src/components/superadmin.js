@@ -1,229 +1,238 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
-  VStack,
+  Card,
+  CardBody,
   Text,
   Button,
-  Avatar,
-  Container,
-  Divider,
-  Stack,
+  Flex,
+  VStack,
   Heading,
+  Divider,
+  useColorModeValue,
+  Container,
+  SimpleGrid
 } from "@chakra-ui/react";
+import {
+  Users,
+  Tag,
+  Settings,
+  ShieldCheckIcon,
+  AlertTriangle,
+  LayoutDashboard,
+  HomeIcon,
+  ChevronLeft
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../providers/authProvider";
+import AllUsers from "./allUsers";
+import { UserProfile } from "./userProfile";
+import UserList from "./itsuperadmin";
+import UserCat from "./itsuperadmincat";
 
 const SuperAdmin = () => {
-  const user = useAuth(); 
+  const user = useAuth();
   const navigate = useNavigate();
-  
+  const [selectedTab, setSelectedTab] = useState("user-list");
+  const bgColor = useColorModeValue("gray.50", "gray.900");
+  const scrollToMainContent = (offset = 200) => {
+    const element = document.getElementById('main-content');
+    const bodyTop = document.body.getBoundingClientRect().top;
+    const elementTop = element.getBoundingClientRect().top;
+    const scrollTo = elementTop - bodyTop - offset;
+
+    window.scrollTo({ top: scrollTo, behavior: 'smooth' });
+  };
+
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      p={2}
-      bg="gray.50"
-      minH="100vh"
-    >
-      <Container maxW="7xl" p={0} m={0} mb={6}>
-              <Stack
-                direction={{ base: "column", md: "row" }}
-                spacing={{ base: 4, md: 8 }}
-                align="center"
-                justify="center"
-                bg="white"
-                p={4}
-                borderRadius="xl"
-                shadow="lg"
-                w="full"
+    <Box bg={bgColor} minH="100vh" py={6} px={{ base: 4, md: 8 }}>
+      <Container maxW="1400px" p={0} mx={'auto'}>
+        <Flex
+          direction={{ base: "column", lg: "row" }}
+          gap={8}
+        >
+          <Box w={{ base: "full", lg: "300px" }} minW={{ base: "full", lg: "300px" }}>
+            <Card shadow="sm" borderRadius="lg" overflow="hidden">
+              <CardBody p={0}>
+                <UserProfile user={user} />
+              </CardBody>
+            </Card>
+
+            <Card mt={6} shadow="sm" borderRadius="lg" overflow="hidden">
+              <CardBody p={0}>
+                <VStack spacing={0} divider={<Divider />} align="stretch">
+                  <Box p={4} bg="gray.50">
+                    <Heading size="sm" fontWeight="semibold">Admin Actions</Heading>
+                  </Box>
+
+                  <Button
+                    justifyContent="flex-start"
+                    leftIcon={<Users size={16} />}
+                    colorScheme="blue"
+                    variant="ghost"
+                    borderRadius={0}
+                    h="50px"
+                    onClick={() => { setSelectedTab("user-management"); scrollToMainContent(); }}
+                  >
+                    User Management
+                  </Button>
+
+                  <Button
+                    justifyContent="flex-start"
+                    leftIcon={<Tag size={16} />}
+                    colorScheme="green"
+                    variant="ghost"
+                    borderRadius={0}
+                    h="50px"
+                    onClick={() => { setSelectedTab("category-management"); scrollToMainContent(); }}
+                  >
+                    Category Management
+                  </Button>
+
+                  <Button
+                    justifyContent="flex-start"
+                    leftIcon={<Settings size={16} />}
+                    variant="ghost"
+                    borderRadius={0}
+                    h="50px"
+                    disabled
+                  >
+                    System Settings
+                  </Button>
+
+                  <Button
+                    justifyContent="flex-start"
+                    leftIcon={<AlertTriangle size={16} />}
+                    variant="ghost"
+                    borderRadius={0}
+                    h="50px"
+                    disabled
+                  >
+                    Alerts Management
+                  </Button>
+
+                  <Button
+                    justifyContent="flex-start"
+                    leftIcon={<HomeIcon size={16} />}
+                    variant="ghost"
+                    borderRadius={0}
+                    h="50px"
+                    onClick={() => { setSelectedTab("user-list"); scrollToMainContent(400); }}
+                  >
+                    Return to Home
+                  </Button>
+                </VStack>
+              </CardBody>
+            </Card>
+          </Box>
+
+          <Box flex={1} overflow="auto">
+            <Box
+              mb={6}
+              p={6}
+              borderRadius="lg"
+              bg="blue.500"
+              color="white"
+              backgroundImage="linear-gradient(to right, #2C5282, #3182CE)"
+              position="relative"
+              overflow="hidden"
+            >
+              <Box
+                position="absolute"
+                right="-8px"
+                top="-8px"
+                opacity={0.1}
+                transform="rotate(15deg)"
               >
-                <VStack spacing={4} align="center" w={{ base: "full", md: "auto" }}>
-                  <Avatar
-                    name={user?.name || "Guest"}
-                    size="2xl"
-                    bg="teal.500"
-                    color="white"
-                    shadow="lg"
-                  />
-                  <Text fontSize="2xl" fontWeight="bold" color="teal.600">
-                    {user?.name || "Guest"}
-                  </Text>
-                </VStack>
-      
-                <Divider
-                  orientation={{ base: "horizontal", md: "vertical" }}
-                  h={{ base: "1px", md: "120px" }}
-                />
-      
-                <VStack
-                  spacing={4}
-                  align="start"
-                  flex={1}
-                  align-item="flex-start"
-                  width={["full", "full", "auto"]}
-                >
-                  <Box>
-                    <Text color="gray.500" fontSize="sm">
-                      Email
-                    </Text>
-                    <Text fontSize="md" fontWeight="medium">
-                      {user?.email || "N/A"}
-                    </Text>
-                  </Box>
-                  <Box>
-                    <Text color="gray.500" fontSize="sm">
-                      EmployeeID
-                    </Text>
-                    <Text fontSize="md" fontWeight="medium">
-                      {user?.id || "N/A"}
-                    </Text>
-                  </Box>
-                  <Box>
-                    <Text color="gray.500" fontSize="sm">
-                      Role
-                    </Text>
-                    <Text fontSize="md" fontWeight="medium">
-                      {user?.role || "N/A"}
-                    </Text>
-                  </Box>
-                </VStack>
-      
-                <Divider
-                  orientation={{ base: "horizontal", md: "vertical" }}
-                  h={{ base: "1px", md: "120px" }}
-                />
-      
-                <VStack
-                  spacing={4}
-                  align="start"
-                  flex={1}
-                  align-item="flex-start"
-                  width={["full", "full", "auto"]}
-                >
-                  <Box>
-                    <Text color="gray.500" fontSize="sm">
-                      Reporting Manager
-                    </Text>
-                    <Text fontSize="md" fontWeight="medium">
-                      {user?.reportingTo || "N/A"}
-                    </Text>
-                  </Box>
-                  <Box>
-                    <Text color="gray.500" fontSize="sm">
-                      Department
-                    </Text>
-                    <Text fontSize="md" fontWeight="medium">
-                      {user?.department || "N/A"}
-                    </Text>
-                  </Box>
-                  <Box>
-                    <Text color="gray.500" fontSize="sm">
-                      Contact Number
-                    </Text>
-                    <Text fontSize="md" fontWeight="medium">
-                      {user?.contact || "N/A"}
-                    </Text>
-                  </Box>
-                </VStack>
-              </Stack>
-            </Container>
+                <ShieldCheckIcon color="white" size={130} />
+              </Box>
+              <VStack align="start" spacing={2} position="relative" zIndex={1}>
+                <Heading size="lg">Super Admin Dashboard</Heading>
+                <Text>Manage users, categories, and system settings</Text>
+              </VStack>
+            </Box>
 
-      <Stack
-        direction={{ base: "column", md: "row" }}
-        spacing={{ base: "6", md: "auto" }}
-        mb={10}
-        justify={["center", "space-between"]}
-        align="center"
-        w="full"
-        maxW="7xl"
-      >
-        <VStack
-          spacing={4}
-          w={{ base: "full", md: "500px" }}
-          border="2px"
-          borderColor="gray.200"
-          borderRadius="xl"
-          p={4}
-          bg="white"
-          shadow="lg"
-          transition="all 0.3s"
-          _hover={{ shadow: "xl", transform: "translateY(-4px)" }}
-        >
-          <Button
-            onClick={() => navigate("/superadmin-userlist")}
-            w="full"
-            h="70px"
-            fontSize="xl"
-            fontWeight="bold"
-            bg="blue.500"
-            color="white"
-            borderRadius="lg"
-            _hover={{
-              bg: "blue.600",
-              transform: "scale(1.02)",
-            }}
-            _active={{
-              bg: "blue.700",
-              transform: "scale(0.98)",
-            }}
-            transition="all 0.2s"
-          >
-            User Management
-          </Button>
-          <Text
-            color="blue.600"
-            fontSize="lg"
-            fontWeight="medium"
-            textAlign="center"
-          >
-            Manage Users (ADD / Change Password)
-          </Text>
-        </VStack>
+            {selectedTab === "user-list" && <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5} mb={6}>
+              <Card
+                p={5}
+                shadow="sm"
+                borderRadius="lg"
+                _hover={{ transform: "translateY(-2px)", shadow: "md" }}
+                transition="all 0.2s"
+                cursor="pointer"
+                onClick={() => { setSelectedTab("user-management"); scrollToMainContent(); }}
+                borderLeft="4px solid"
+                borderColor="blue.500"
+              >
+                <Flex align="center">
+                  <Box
+                    p={3}
+                    borderRadius="full"
+                    bg="blue.100"
+                    color="blue.500"
+                    mr={3}
+                  >
+                    <Users size={18} />
+                  </Box>
+                  <VStack align="start" spacing={0}>
+                    <Text fontWeight="medium">User Management</Text>
+                    <Text fontSize="sm" color="gray.500">Add, edit, or manage system users</Text>
+                  </VStack>
+                </Flex>
+              </Card>
 
-        <VStack
-          spacing={4}
-          w={{ base: "full", md: "500px" }}
-          border="2px"
-          borderColor="gray.200"
-          borderRadius="xl"
-          p={4}
-          bg="white"
-          shadow="lg"
-          transition="all 0.3s"
-          _hover={{ shadow: "xl", transform: "translateY(-4px)" }}
-        >
-          <Button
-            onClick={() => navigate("/superadmin-category")}
-            w="full"
-            h="70px"
-            fontSize="xl"
-            fontWeight="bold"
-            bg="green.500"
-            color="white"
-            borderRadius="lg"
-            _hover={{
-              bg: "green.600",
-              transform: "scale(1.02)",
-            }}
-            _active={{
-              bg: "green.700",
-              transform: "scale(0.98)",
-            }}
-            transition="all 0.2s"
-          >
-            Category Management
-          </Button>
-          <Text
-            color="green.600"
-            fontSize="lg"
-            fontWeight="medium"
-            textAlign="center"
-          >
-            Manage categories of tickets
-          </Text>
-        </VStack>
-      </Stack>
+              <Card
+                p={5}
+                shadow="sm"
+                borderRadius="lg"
+                _hover={{ transform: "translateY(-2px)", shadow: "md" }}
+                transition="all 0.2s"
+                cursor="pointer"
+                onClick={() => { setSelectedTab("category-management"); scrollToMainContent(); }}
+                borderLeft="4px solid"
+                borderColor="green.500"
+              >
+                <Flex align="center">
+                  <Box
+                    p={3}
+                    borderRadius="full"
+                    bg="green.100"
+                    color="green.500"
+                    mr={3}
+                  >
+                    <Tag size={18} />
+                  </Box>
+                  <VStack align="start" spacing={0}>
+                    <Text fontWeight="medium">Category Management</Text>
+                    <Text fontSize="sm" color="gray.500">Manage ticket categories</Text>
+                  </VStack>
+                </Flex>
+              </Card>
+            </SimpleGrid>}
+
+            <Card shadow="sm" borderRadius="lg">
+              <Button
+                position={'absolute'}
+                right={7}
+                top={7}
+                leftIcon={<ChevronLeft size={16} />}
+                size="sm"
+                zIndex={9}
+                variant="outline"
+                display={selectedTab === 'user-list' ? 'none' : 'flex'}
+                onClick={() => { setSelectedTab("user-list"); scrollToMainContent(400); }}
+              >
+                Back
+              </Button>
+              <CardBody id="main-content" p={0}>
+                {selectedTab === "user-list" && <AllUsers />}
+                {selectedTab === "user-management" && <UserList />}
+                {selectedTab === "category-management" && <UserCat />}
+              </CardBody>
+            </Card>
+          </Box>
+        </Flex>
+      </Container>
     </Box>
   );
 };

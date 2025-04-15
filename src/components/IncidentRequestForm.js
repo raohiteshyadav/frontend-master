@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { X } from "lucide-react";
+import { AlertTriangleIcon, X } from "lucide-react";
 import MediaUploader from "./mediaUploader";
 import MediaPreview from "./mediaPreview";
 import {
@@ -27,6 +27,7 @@ import {
   useToast,
   HStack,
   Input,
+  VStack,
 } from "@chakra-ui/react";
 import { useAuth } from "../providers/authProvider";
 
@@ -44,7 +45,7 @@ const IncidentRequestForm = () => {
   const [attachmentId, setAttachmentId] = useState(null);
   const [fileName, setFileName] = useState(null);
   const [userId, setUserId] = useState("");
-  const [name, setName]=useState("");
+  const [name, setName] = useState("");
 
   // States for fetched data
   const [categories, setCategories] = useState([]);
@@ -64,30 +65,31 @@ const IncidentRequestForm = () => {
 
   // Fetch categories on component mount
 
-    const handleCreatedBy = async (createdById) => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(
-          `http://${apiIp}/user/info?id=${createdById}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-  
-        if (response.data && response.data.name) {
-          setName(response.data.name); 
-        } else {
-          setName(''); 
+  const handleCreatedBy = async (createdById) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `http://${apiIp}/user/info?id=${createdById}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      } catch (err) {
-        console.error("Error in getting user details", err);
-      } finally {
-        setLoading(false);
+      );
+
+      if (response.data && response.data.name) {
+        setName(response.data.name);
+      } else {
+        setName('');
       }
-    };
-  
+    } catch (err) {
+      setName('');
+      console.error("Error in getting user details", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchCategories = async () => {
       setLoading((prev) => ({ ...prev, categories: true }));
@@ -179,7 +181,6 @@ const IncidentRequestForm = () => {
           setLoading((prev) => ({ ...prev, items: false }));
         }
       } else {
-        // Clear items if subcategory is cleared
         setItems([]);
         setItem("");
       }
@@ -191,7 +192,6 @@ const IncidentRequestForm = () => {
   const handleCategoryChange = (e) => {
     const selectedCategory = e.target.value;
     setCategory(selectedCategory);
-    // Reset dependent fields
     setSubcategory("");
     setItem("");
     setSubcategories([]);
@@ -201,7 +201,6 @@ const IncidentRequestForm = () => {
   const handleSubcategoryChange = (e) => {
     const selectedSubcategory = e.target.value;
     setSubcategory(selectedSubcategory);
-    // Reset dependent field
     setItem("");
     setItems([]);
   };
@@ -209,12 +208,16 @@ const IncidentRequestForm = () => {
   const handleUploadSuccess = ({ attachmentId, fileName }) => {
     setAttachmentId(attachmentId);
     setFileName(fileName);
-    toast.success("File uploaded successfully!!");
   };
 
   const handleClearAttachment = () => {
     setAttachmentId(null);
     setFileName(null);
+  };
+
+  const handleCancel = () => {
+    navigate("/raise-a-ticket?tab=home");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleSubmit = () => {
@@ -223,14 +226,12 @@ const IncidentRequestForm = () => {
       return;
     }
 
-    // Get label for category, subcategory, and item
     const selectedCategory = categories.find((cat) => cat.id == category);
     const selectedSubcategory = subcategories.find(
       (subcat) => subcat.id == subcategory
     );
     const selectedItem = items.find((it) => it.id == item);
 
-    // Check if the labels are found
     if (!selectedCategory || !selectedSubcategory || !selectedItem) {
       toast.error(
         "Error: Unable to find the corresponding labels for the selected IDs."
@@ -265,7 +266,7 @@ const IncidentRequestForm = () => {
           duration: 9000,
           isClosable: true,
         });
-        navigate("/raise-a-ticket");
+        handleCancel();
       })
       .catch((error) => {
         console.error(error);
@@ -274,7 +275,7 @@ const IncidentRequestForm = () => {
   };
 
   return (
-    <Box py={8} px={4} maxW="650px" mx="auto">
+    <>
       <Card
         bg={cardBg}
         boxShadow="lg"
@@ -283,93 +284,124 @@ const IncidentRequestForm = () => {
         borderColor={borderColor}
         overflow="hidden"
       >
-        <CardHeader bg="teal.50" py={6}>
-          <Heading size="lg" textAlign="center" color={headingColor}>
+        <CardHeader bg="teal.50" py={6} backgroundImage="linear-gradient(to right, #abede0, #e6fffa)">
+          <Heading
+            size="lg"
+            textAlign="left"
+            display={'flex'}
+            alignItems={'center'}
+            gap={4}
+            color={headingColor}
+          >
+            <AlertTriangleIcon size={32} />
             Incident Request Form
           </Heading>
         </CardHeader>
 
         <CardBody pt={6} pb={2}>
           <Stack spacing={6}>
-            <FormControl isRequired>
-              <FormLabel fontWeight="medium">Category</FormLabel>
-              <Select
-                placeholder="Select a category"
-                value={category}
-                onChange={handleCategoryChange}
-                isDisabled={loading.categories}
-                focusBorderColor="teal.400"
-                size="md"
-              >
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.label}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
+            <Stack width={'full'} direction={{ base: "column", md: "row" }}>
+              <FormControl isRequired>
+                <FormLabel fontWeight="medium">Category</FormLabel>
+                <Select
+                  placeholder="Select a category"
+                  value={category}
+                  onChange={handleCategoryChange}
+                  isDisabled={loading.categories}
+                  focusBorderColor="teal.400"
+                  size="md"
+                >
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.label}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
 
-            <FormControl isRequired>
-              <FormLabel fontWeight="medium">Subcategory</FormLabel>
-              <Select
-                placeholder="Select a subcategory"
-                value={subcategory}
-                onChange={handleSubcategoryChange}
-                isDisabled={!category || loading.subcategories}
-                focusBorderColor="teal.400"
-                size="md"
-              >
-                {subcategories.map((subcat) => (
-                  <option key={subcat.id} value={subcat.id}>
-                    {subcat.label}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
+              <FormControl isRequired>
+                <FormLabel fontWeight="medium">Subcategory</FormLabel>
+                <Select
+                  placeholder="Select a subcategory"
+                  value={subcategory}
+                  onChange={handleSubcategoryChange}
+                  isDisabled={!category || loading.subcategories}
+                  focusBorderColor="teal.400"
+                  size="md"
+                >
+                  {subcategories.map((subcat) => (
+                    <option key={subcat.id} value={subcat.id}>
+                      {subcat.label}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+            </Stack>
 
-            <FormControl isRequired>
-              <FormLabel fontWeight="medium">Item</FormLabel>
-              <Select
-                placeholder="Select an item"
-                value={item}
-                onChange={(e) => setItem(e.target.value)}
-                isDisabled={!subcategory || loading.items}
-                focusBorderColor="teal.400"
-                size="md"
-              >
-                {items.map((it) => (
-                  <option key={it.id} value={it.id}>
-                    {it.label}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
+            <Stack width={'full'} direction={{ base: "column", md: "row" }}>
+              <FormControl isRequired>
+                <FormLabel fontWeight="medium">Item</FormLabel>
+                <Select
+                  placeholder="Select an item"
+                  value={item}
+                  onChange={(e) => setItem(e.target.value)}
+                  isDisabled={!subcategory || loading.items}
+                  focusBorderColor="teal.400"
+                  size="md"
+                >
+                  {items.map((it) => (
+                    <option key={it.id} value={it.id}>
+                      {it.label}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
 
-            <FormControl isRequired>
-              <FormLabel fontWeight="medium">Severity</FormLabel>
-              <Select
-                placeholder="Select a severity"
-                value={severity}
-                onChange={(e) => setSeverity(e.target.value)}
-                focusBorderColor="teal.400"
-                size="md"
-              >
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-              </Select>
-            </FormControl>
+              <FormControl isRequired>
+                <FormLabel fontWeight="medium">Severity</FormLabel>
+                <Select
+                  placeholder="Select a severity"
+                  value={severity}
+                  onChange={(e) => setSeverity(e.target.value)}
+                  focusBorderColor="teal.400"
+                  size="md"
+                >
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                </Select>
+              </FormControl>
+            </Stack>
+
 
             {(user?.role === "admin" || user?.role === "it") && (
-              <FormControl isRequired>
-                <FormLabel>On Behalf of</FormLabel>
-                <Textarea
-                  placeholder="Create ticket on behalf of any user"
-                  value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
-                  minH="120px"
-                />
-              </FormControl>
+              <Stack spacing={4} direction="row" align="center">
+                <FormControl w="42%">
+                  <FormLabel>On Behalf of</FormLabel>
+                  <Input
+                    placeholder="Employee ID of third person"
+                    value={userId}
+                    onChange={(e) => {
+                      setUserId(e.target.value);
+                      handleCreatedBy(e.target.value);
+                    }}
+                    focusBorderColor="teal.400"
+                  />
+                </FormControl>
+
+                <Box textAlign="left" mt={6}>
+                  {name ? (
+                    <Text>
+                      You are creating a ticket on behalf of<br />
+                      <Text as="span" fontWeight="bold">
+                        {name}
+                      </Text>
+                    </Text>
+                  ) : userId.trim() ? (
+                    <Text color="red.500">User not found</Text>
+                  ) : null}
+                </Box>
+              </Stack>
             )}
 
             <FormControl isRequired>
@@ -378,39 +410,11 @@ const IncidentRequestForm = () => {
                 placeholder="Please describe the incident in detail..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                minH="120px"
+                minH="200px"
                 focusBorderColor="teal.400"
                 size="md"
               />
             </FormControl>
-
-            {(user?.role === "admin" || user?.role === "it") && (
-              <FormControl>
-                <FormLabel>On Behalf of</FormLabel>
-                <Flex align="center">
-                  <Input
-                    placeholder="Employee id of third person"
-                    value={userId}
-                    onChange={(e) => {
-                      setUserId(e.target.value);
-                      handleCreatedBy(e.target.value);
-                    }}
-                    minH="40px"
-                    maxW="200px"
-                  />
-                  {name ? (
-                    <Text ml="10px">
-                      You are creating a ticket on behalf of{" "}
-                      <Text as="span" fontWeight="bold">
-                        {name}
-                      </Text>
-                    </Text>
-                  ) : (
-                    <Text ml="10px">User not found</Text>
-                  )}
-                </Flex>
-              </FormControl>
-            )}
 
             <FormControl>
               <FormLabel fontWeight="medium">Attach File (Optional)</FormLabel>
@@ -437,29 +441,23 @@ const IncidentRequestForm = () => {
                   </Box>
                 </Box>
               ) : (
-                <Box
-                  border="1px dashed"
-                  borderColor={borderColor}
-                  borderRadius="md"
-                  p={4}
-                >
-                  <MediaUploader
-                    onUploadSuccess={handleUploadSuccess}
-                    onUploadError={(error) => {
-                      toast.error("Error while uploading file");
-                      console.error(error);
-                    }}
-                    maxSizeMB={10}
-                    uploadUrl={`http://${apiIp}/media/upload`}
-                    acceptedFileTypes={[
-                      "application/pdf",
-                      "image/jpeg",
-                      "image/png",
-                      "image/gif",
-                    ]}
-                    disabled={!!attachmentId}
-                  />
-                </Box>
+                <MediaUploader
+                  onUploadSuccess={handleUploadSuccess}
+                  onUploadError={(error) => {
+                    toast.error("Error while uploading file");
+                    console.error(error);
+                  }}
+                  maxSizeMB={10}
+                  uploadUrl={`http://${apiIp}/media/upload`}
+                  acceptedFileTypes={[
+                    "application/pdf",
+                    "image/jpeg",
+                    "image/png",
+                    "image/gif",
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                  ]}
+                  disabled={!!attachmentId}
+                />
               )}
             </FormControl>
           </Stack>
@@ -471,7 +469,7 @@ const IncidentRequestForm = () => {
           <Button
             colorScheme="gray"
             size="lg"
-            onClick={() => navigate("/raise-a-ticket")}
+            onClick={() => handleCancel()}
             _hover={{ bg: "gray.500", color: "white" }}
             transition="all 0.2s"
             flex="1"
@@ -497,7 +495,7 @@ const IncidentRequestForm = () => {
         hideProgressBar={true}
         closeOnClick
       />
-    </Box>
+    </>
   );
 };
 

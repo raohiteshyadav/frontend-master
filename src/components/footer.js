@@ -3,7 +3,6 @@ import { Box, Text, useBreakpointValue } from '@chakra-ui/react';
 import { keyframes } from '@emotion/react';
 
 const Marquee = ({ text }) => {
-  // Define keyframes for the marquee effect
   const marqueeAnimation = keyframes`
     0% {
       transform: translateX(100%);
@@ -13,7 +12,6 @@ const Marquee = ({ text }) => {
     }
   `;
 
-  // Add some responsive behavior for the speed
   const speed = useBreakpointValue({
     base: '200s',
     md: '100s',

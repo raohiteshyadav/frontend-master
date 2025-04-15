@@ -15,6 +15,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { DownloadIcon } from "lucide-react";
+import { useParams } from "react-router-dom";
 const apiIp = process.env.REACT_APP_API_IP;
 const extractFileName = (contentDisposition) => {
   if (!contentDisposition) return "Unknown File";
@@ -36,6 +37,7 @@ const MediaPreview = ({
     loading: true,
     error: null,
   });
+  const { id } = useParams();
 
   const toast = useToast();
 
@@ -44,14 +46,14 @@ const MediaPreview = ({
 
     const fetchMedia = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/media/download/${mediaId}`, {
+        const response = await axios.get(`${baseUrl}/media/download/${mediaId ? mediaId : id}`, {
           responseType: "blob",
           signal: controller.signal,
         });
 
         const mediaUrl = URL.createObjectURL(response.data);
         const fileName = extractFileName(
-          response.headers["content-disposition"]
+          response.headers["Content-Disposition"]
         );
 
         setMediaState({
@@ -104,11 +106,12 @@ const MediaPreview = ({
         href={fileUrl}
         download={name}
         colorScheme="blue"
+        variant={'outline'}
         leftIcon={<DownloadIcon />}
         size="md"
         mt={2}
       >
-        Download file
+        Download
       </Button>
     );
 

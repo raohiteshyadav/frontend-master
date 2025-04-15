@@ -29,6 +29,7 @@ const apiIp = process.env.REACT_APP_API_IP;
 
 const PreviewIncSerIt = () => {
   const [searchParams, setSearchParams]= useSearchParams();
+  const params = new URLSearchParams(window.location.search);
   const { id } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
@@ -253,7 +254,7 @@ useEffect(() => {
           duration: 5000,
           isClosable: true,
         });
-        navigate("/home");
+        navigate(`/home?${params.toString()}`);
       })
       .catch((error) => {
         console.error(error);

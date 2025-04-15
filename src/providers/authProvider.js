@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem("token");
 
       if (!token) {
-        if (location && location.pathname != "/login") navigate("/login");
+        if (location && (location.pathname != "/login" && location.pathname != "/contact")) navigate("/login");
         return;
       }
 
@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        setUser(response.data); // Set user data if token is valid
+        setUser(response.data);
       } catch (error) {
         if (error.response && error.response.status === 401) {
           localStorage.removeItem("token");

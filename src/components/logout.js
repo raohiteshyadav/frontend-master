@@ -1,31 +1,41 @@
-import React from "react";
-import { Button } from "@chakra-ui/react";
-import { FaPowerOff } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 
-const LogoutButton = () => {
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Button, useToast, Box, useBreakpointValue } from "@chakra-ui/react";
+import { LogOut } from "lucide-react";
+
+const LogoutButton = ({ fullWidth = false }) => {
   const navigate = useNavigate();
+  const toast = useToast();
+  const buttonSize = useBreakpointValue({ base: "md", md: "sm" });
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    sessionStorage.clear();
-    navigate("/login");
+    
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out",
+      status: "success",
+      duration: 2000,
+      isClosable: true,
+    });
+    
+    setTimeout(() => {
+      navigate("/login");
+    }, 500);
   };
 
   return (
     <Button
-    onClick={handleLogout}
-    p={3}
-    borderRadius={'25px'}
-    color={'red.400'}
-    _hover={{
-        bg: "red.200", // Red background when hovered
-        color: "white", // White icon color on hover
-      }}
-      _active={{
-        bg: "red.600", // Darker red when the button is clicked
-      }}>
-      <FaPowerOff />
+      leftIcon={<LogOut size={18} />}
+      onClick={handleLogout}
+      colorScheme="red"
+      variant="outline"
+      size={buttonSize}
+      w={fullWidth ? "100%" : "auto"}
+      _hover={{ bg: "red.100", color: "red.700" }}
+    >
+      Logout
     </Button>
   );
 };

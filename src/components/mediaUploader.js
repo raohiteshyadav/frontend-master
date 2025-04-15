@@ -16,6 +16,7 @@ import {
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import { Cloud, CloudUpload, X } from "lucide-react";
+import { useParams } from "react-router-dom";
 
 const DEFAULT_ACCEPTED_TYPES = [
   "application/pdf",
@@ -126,13 +127,17 @@ export const MediaUploader = ({
           borderColor={
             isDragActive ? "blue.500" : error ? "red.500" : "gray.200"
           }
-          bg={isDragActive ? "blue.50" : "transparent"}
+          bg={isDragActive ? "teal.400" : "transparent"}
           p={6}
           cursor="pointer"
           transition="all 0.2s"
           _hover={{
-            borderColor: "blue.500",
-            bg: "blue.50",
+            borderColor: "teal.400",
+            bg: "teal.50",
+            "& svg": { color: "teal.500" },
+          }}
+          sx={{
+            "&:hover p": { color: "teal.500" },
           }}
         >
           <input {...getInputProps()} />
@@ -145,7 +150,7 @@ export const MediaUploader = ({
                   : "Drag & drop a file here, or click to select"}
               </Text>
               <Text fontSize="xs" color="gray.500">
-                Accepted files: PDF, Images (JPEG, PNG, GIF) up to {maxSizeMB}MB
+                Accepted files: PDF, Excel, Images (JPEG, PNG, GIF) up to {maxSizeMB}MB
               </Text>
             </VStack>
           </Center>

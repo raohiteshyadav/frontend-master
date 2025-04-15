@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   Box,
   Button,
-  Container,
   FormControl,
   FormLabel,
   Input,
@@ -23,13 +22,12 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Heading,
   Alert,
   AlertIcon,
   Flex,
-  IconButton,
   useColorModeValue,
   Select,
+  Stack,
 } from "@chakra-ui/react";
 import * as XLSX from "xlsx";
 import { FiUpload, FiUserPlus, FiUsers, FiKey, FiEdit2 } from "react-icons/fi";
@@ -37,7 +35,6 @@ import axios from "axios";
 import EditUser from "./editUser";
 
 const UserList = () => {
-  // Add new state for password change
   const [passwordChangeId, setPasswordChangeId] = useState("");
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [data, setData] = useState([]);
@@ -56,7 +53,6 @@ const UserList = () => {
   const apiIp = process.env.REACT_APP_API_IP;
   const token = localStorage.getItem("token");
 
-  // Color mode values
   const cardBg = useColorModeValue("white", "gray.700");
   const borderColor = useColorModeValue("gray.200", "gray.600");
 
@@ -73,7 +69,7 @@ const UserList = () => {
           const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
           const formattedData = jsonData.map((row) => ({
-            id: String(row["ID"]),
+            id: row["ID"],
             name: row["Name"],
             email: row["Email"],
             contact: String(row["Contact"]),
@@ -161,8 +157,7 @@ const UserList = () => {
       return;
     }
 
-    // Prepare the user data as an array
-    const userPayload = [newUser]; // This is an array of one object
+    const userPayload = [newUser];
 
     try {
       setIsUploading(true);
@@ -186,7 +181,6 @@ const UserList = () => {
         isClosable: true,
       });
 
-      // Reset the form
       setNewUser({
         id: "RML",
         name: "",
@@ -232,7 +226,7 @@ const UserList = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Send token in Authorization header
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -247,7 +241,7 @@ const UserList = () => {
         isClosable: true,
       });
 
-      setPasswordChangeId(""); // Clear the input field after successful request
+      setPasswordChangeId("");
     } catch (error) {
       toast({
         title: "Error",
@@ -257,135 +251,122 @@ const UserList = () => {
         isClosable: true,
       });
     } finally {
-      setIsChangingPassword(false); // Reset the loading state
+      setIsChangingPassword(false);
     }
   };
 
   return (
-    <Container minH={"80%"} maxW="7xl" py={8}>
-      <Card minH={"70vh"} bg={cardBg} borderColor={borderColor} shadow="md">
-        <CardHeader>
-          <Flex align="center" gap={2}>
-            <FiUsers size="24px" />
-            <Text fontSize="3xl">User Management</Text>
-          </Flex>
-        </CardHeader>
+    <Card minH={"70vh"} bg={cardBg}>
+      <CardHeader borderBottom={'1px solid gray'}>
+        <Flex align="center" gap={2}>
+          <FiUsers size="24px" />
+          <Text fontSize="3xl">User Management</Text>
+        </Flex>
+      </CardHeader>
 
-        <CardBody>
-          <Tabs isFitted variant="soft-rounded" colorScheme="blue">
-            <TabList
-              overflowX="hidden"
-              mb={4}
-              display="flex"
-              flexDirection={{ base: "column", md: "row" }} // Stacks tabs vertically on small screens
-              justifyContent="space-between"
-              w="100%"
-            >
-              <Tab>
-                <Flex align="center" gap={2}>
-                  <FiUpload />
-                  <Text>Upload Excel</Text>
-                </Flex>
-              </Tab>
-              <Tab>
-                <Flex align="center" gap={2}>
-                  <FiUserPlus />
-                  <Text>Add User</Text>
-                </Flex>
-              </Tab>
-              <Tab>
-                <Flex align="center" gap={2}>
-                  <FiEdit2 />
-                  <Text>Edit User</Text>
-                </Flex>
-              </Tab>
-              <Tab>
-                <Flex align="center" gap={2}>
-                  <FiKey />
-                  <Text>Reset Password</Text>
-                </Flex>
-              </Tab>
-            </TabList>
+      <CardBody>
+        <Tabs isLazy isFitted variant="soft-rounded" colorScheme="blue">
+          <TabList
+            overflowX="hidden"
+            mb={4}
+            display="flex"
+            flexDirection={{ base: "column", md: "row" }}
+            justifyContent="space-between"
+            w="100%"
+          >
+            <Tab>
+              <Flex align="center" gap={2}>
+                <FiUpload />
+                <Text>Upload Excel</Text>
+              </Flex>
+            </Tab>
+            <Tab>
+              <Flex align="center" gap={2}>
+                <FiUserPlus />
+                <Text>Add User</Text>
+              </Flex>
+            </Tab>
+            <Tab>
+              <Flex align="center" gap={2}>
+                <FiEdit2 />
+                <Text>Edit User</Text>
+              </Flex>
+            </Tab>
+            <Tab>
+              <Flex align="center" gap={2}>
+                <FiKey />
+                <Text>Reset Password</Text>
+              </Flex>
+            </Tab>
+          </TabList>
 
-            <TabPanels>
-              <TabPanel minHeight={"50vh"}>
-                <VStack spacing={6} align="stretch">
-                  <Flex gap={4} p={2}>
-                    <Input
-                      pt={1}
-                      type="file"
-                      accept=".xlsx, .xls"
-                      onChange={handleFileUpload}
-                      variant="filled"
-                      flex={1}
-                    />
-                    <Button
-                      colorScheme="blue"
-                      onClick={handlePostData}
-                      isLoading={isUploading}
-                      loadingText="Uploading..."
-                      isDisabled={data.length === 0}
-                      leftIcon={<FiUpload />}
-                    >
-                      Upload
-                    </Button>
-                  </Flex>
+          <TabPanels>
+            <TabPanel minHeight={"50vh"}>
+              <VStack spacing={6} align="stretch">
+                <Flex gap={4} p={2}>
+                  <Input
+                    pt={1}
+                    type="file"
+                    accept=".xlsx, .xls"
+                    onChange={handleFileUpload}
+                    variant="filled"
+                    flex={1}
+                  />
+                  <Button
+                    colorScheme="blue"
+                    onClick={handlePostData}
+                    isLoading={isUploading}
+                    loadingText="Uploading..."
+                    isDisabled={data.length === 0}
+                    leftIcon={<FiUpload />}
+                  >
+                    Upload
+                  </Button>
+                </Flex>
 
-                  {data.length > 0 ? (
-                    <Box overflowX="auto">
-                      <Table variant="simple">
-                        <Thead>
-                          <Tr>
-                            <Th>ID</Th>
-                            <Th>Name</Th>
-                            <Th>Email</Th>
-                            <Th>Contact</Th>
-                            <Th>Department</Th>
-                            <Th>Role</Th>
-                            <Th>Manager</Th>
-                            <Th>Password</Th>
+                {data.length > 0 ? (
+                  <Box overflowX="auto">
+                    <Table variant="simple">
+                      <Thead>
+                        <Tr>
+                          <Th>ID</Th>
+                          <Th>Name</Th>
+                          <Th>Email</Th>
+                          <Th>Contact</Th>
+                          <Th>Department</Th>
+                          <Th>Role</Th>
+                          <Th>Manager</Th>
+                          <Th>Password</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {data.map((item, index) => (
+                          <Tr key={index}>
+                            <Td>{item.id}</Td>
+                            <Td>{item.name}</Td>
+                            <Td>{item.email}</Td>
+                            <Td>{item.contact}</Td>
+                            <Td>{item.department}</Td>
+                            <Td>{item.role}</Td>
+                            <Td>{item.reportingTo}</Td>
+                            <Td>{item.passkey}</Td>
                           </Tr>
-                        </Thead>
-                        <Tbody>
-                          {data.map((item, index) => (
-                            <Tr key={index}>
-                              <Td>{item.id}</Td>
-                              <Td>{item.name}</Td>
-                              <Td>{item.email}</Td>
-                              <Td>{item.contact}</Td>
-                              <Td>{item.department}</Td>
-                              <Td>{item.role}</Td>
-                              <Td>{item.reportingTo}</Td>
-                              <Td>{item.passkey}</Td>
-                            </Tr>
-                          ))}
-                        </Tbody>
-                      </Table>
-                    </Box>
-                  ) : (
-                    <Alert status="info" borderRadius="md">
-                      <AlertIcon />
-                      Upload an Excel file to preview data
-                    </Alert>
-                  )}
-                </VStack>
-              </TabPanel>
-        
-              
-              <TabPanel>
-                <VStack spacing={6}>
-                  <FormControl isRequired>
-                    <FormLabel>Name</FormLabel>
-                    <Input
-                      value={newUser.name}
-                      onChange={(e) =>
-                        setNewUser({ ...newUser, name: e.target.value })
-                      }
-                      placeholder="Enter name"
-                      variant="filled"
-                    />
-                  </FormControl>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </Box>
+                ) : (
+                  <Alert status="info" borderRadius="md">
+                    <AlertIcon />
+                    Upload an Excel file to preview data
+                  </Alert>
+                )}
+              </VStack>
+            </TabPanel>
 
+            <TabPanel>
+              <VStack spacing={6}>
+                <Stack w={'full'} gap={4} display={{ base: 'box', md: 'flex' }} direction={{ base: 'column', md: 'row' }}>
                   <FormControl isRequired>
                     <FormLabel>Employee Id</FormLabel>
                     <Input
@@ -397,6 +378,20 @@ const UserList = () => {
                       variant="filled"
                     />
                   </FormControl>
+                  <FormControl isRequired mb={{ base: 6, md: 'auto' }}>
+                    <FormLabel>Name</FormLabel>
+                    <Input
+                      value={newUser.name}
+                      onChange={(e) =>
+                        setNewUser({ ...newUser, name: e.target.value })
+                      }
+                      placeholder="Enter name"
+                      variant="filled"
+                    />
+                  </FormControl>
+                </Stack>
+
+                <Stack w={'full'} gap={4} display={{ base: 'box', md: 'flex' }} direction={{ base: 'column', md: 'row' }}>
 
                   <FormControl>
                     <FormLabel>Email</FormLabel>
@@ -422,7 +417,9 @@ const UserList = () => {
                       variant="filled"
                     />
                   </FormControl>
+                </Stack>
 
+                <Stack w={'full'} gap={4} display={{ base: 'box', md: 'flex' }} direction={{ base: 'column', md: 'row' }}>
                   <FormControl isRequired>
                     <FormLabel>Department</FormLabel>
                     <Input
@@ -445,7 +442,9 @@ const UserList = () => {
                       variant="filled"
                     />
                   </FormControl>
+                </Stack>
 
+                <Stack w={'full'} gap={4} display={{ base: 'box', md: 'flex' }} direction={{ base: 'column', md: 'row' }}>
                   <FormControl isRequired>
                     <FormLabel>Role</FormLabel>
                     <Select
@@ -459,10 +458,8 @@ const UserList = () => {
                       <option value="it">IT Department</option>
                       <option value="head">Manager</option>
                       <option value="employee">Employee</option>
-                      {/* Add more contact options as needed */}
                     </Select>
                   </FormControl>
-
                   <FormControl>
                     <FormLabel>Password</FormLabel>
                     <Input
@@ -474,57 +471,57 @@ const UserList = () => {
                       variant="filled"
                     />
                   </FormControl>
+                </Stack>
 
-                  <Button
-                    colorScheme="blue"
-                    onClick={handleAddUser}
-                    isDisabled={
-                      !newUser.name ||
-                      !newUser.department ||
-                      !newUser.contact ||
-                      !newUser.id ||
-                      !newUser.role
-                    }
-                    width="full"
-                    leftIcon={<FiUserPlus />}
-                  >
-                    Add User
-                  </Button>
-                </VStack>
-              </TabPanel>
-              <TabPanel>
-                <EditUser/>
-              </TabPanel>
-              <TabPanel minHeight={"50vh"}>
-                <VStack spacing={6} align="stretch">
-                  <FormControl isRequired>
-                    <FormLabel>RML ID</FormLabel>
-                    <Input
-                      value={passwordChangeId}
-                      onChange={(e) => setPasswordChangeId(e.target.value)}
-                      placeholder="Enter RML ID"
-                      variant="filled"
-                    />
-                  </FormControl>
+                <Button
+                  colorScheme="blue"
+                  onClick={handleAddUser}
+                  isDisabled={
+                    !newUser.name ||
+                    !newUser.department ||
+                    !newUser.contact ||
+                    !newUser.id ||
+                    !newUser.role
+                  }
+                  width="full"
+                  leftIcon={<FiUserPlus />}
+                >
+                  Add User
+                </Button>
+              </VStack>
+            </TabPanel>
+            <TabPanel>
+              <EditUser />
+            </TabPanel>
+            <TabPanel minHeight={"50vh"}>
+              <VStack spacing={6} align="stretch">
+                <FormControl isRequired>
+                  <FormLabel>RML ID</FormLabel>
+                  <Input
+                    value={passwordChangeId}
+                    onChange={(e) => setPasswordChangeId(e.target.value)}
+                    placeholder="Enter RML ID"
+                    variant="filled"
+                  />
+                </FormControl>
 
-                  <Button
-                    colorScheme="blue"
-                    onClick={handlePasswordChange}
-                    isLoading={isChangingPassword}
-                    loadingText="Processing..."
-                    isDisabled={!passwordChangeId}
-                    width="full"
-                    leftIcon={<FiKey />}
-                  >
-                    Reset Password
-                  </Button>
-                </VStack>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </CardBody>
-      </Card>
-    </Container>
+                <Button
+                  colorScheme="blue"
+                  onClick={handlePasswordChange}
+                  isLoading={isChangingPassword}
+                  loadingText="Processing..."
+                  isDisabled={!passwordChangeId}
+                  width="full"
+                  leftIcon={<FiKey />}
+                >
+                  Reset Password
+                </Button>
+              </VStack>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </CardBody>
+    </Card >
   );
 };
 
