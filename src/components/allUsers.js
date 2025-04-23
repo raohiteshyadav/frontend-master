@@ -94,7 +94,7 @@ const AllUsers = () => {
   };
 
   return (
-    <Card w="full" maxW="7xl" shadow="md" borderRadius="lg" overflow="hidden">
+    <Card w="full" maxW="7xl" overflow="hidden">
       <CardHeader bg={bgHeader} py={4} px={6}>
         <Flex justify="space-between" align="center" flexWrap="wrap" gap={3}>
           <Heading size="md" fontWeight="semibold">

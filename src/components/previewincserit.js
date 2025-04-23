@@ -18,8 +18,6 @@ import {
   Badge,
   Flex,
   Skeleton,
-  Alert,
-  AlertIcon,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";

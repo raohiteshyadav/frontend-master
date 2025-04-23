@@ -10,7 +10,6 @@ import {
     Button,
     Text,
     VStack,
-    HStack,
     Badge,
     Box,
     Flex,
@@ -20,11 +19,9 @@ import {
     Spinner,
     Textarea,
     FormControl,
-    FormLabel,
     Grid,
     GridItem,
     Heading,
-    Tag,
     Accordion,
     AccordionItem,
     AccordionButton,
@@ -35,32 +32,105 @@ import {
 } from "@chakra-ui/react";
 import {
     Calendar,
-    Clock,
-    User,
     MessageSquare,
     AlertTriangle,
     CheckCircle,
     RefreshCw,
     Send,
     PaperclipIcon,
-    ExternalLink
+    ExternalLink,
+    Edit2Icon,
+    Save,
+    Maximize,
+    Minimize
 } from "lucide-react";
 import axios from "axios";
 import TicketFeedback from "./ticketFeedback";
+import { isNil } from "lodash";
 
 const apiIp = process.env.REACT_APP_API_IP;
 
-const TicketDetails = ({ isOpen, onClose, ticketId }) => {
+const TicketDetails = ({ isOpen, onClose, ticketId, showFeedbackButton = true, refreshTickets = () => { console.log('Refresh function not passed to TicketDetails.') } }) => {
     const [ticket, setTicket] = useState(null);
     const [loading, setLoading] = useState(true);
     const [comment, setComment] = useState("");
     const [submitting, setSubmitting] = useState(false);
+    const [submittingDescription, setSubmittingDescription] = useState(false);
     const [commentHistory, setCommentHistory] = useState([]);
+    const [editMode, setEditMode] = useState(false);
+    const [editedDescription, setEditedDescription] = useState("");
+    const [isFullScreen, setIsFullScreen] = useState(false);
     const { isOpen: isFeedbackOpen, onOpen: onFeedbackOpen, onClose: onFeedbackClose } = useDisclosure();
     const toast = useToast();
 
+    const toggleFullScreen = () => {
+        setIsFullScreen(!isFullScreen);
+    };
+
+    const handleEditDescription = () => {
+        setEditedDescription(ticket.query);
+        setEditMode(true);
+    };
+
+    const cancelEdit = () => {
+        setEditMode(false);
+        setEditedDescription("");
+    };
+
+    const saveDescription = async () => {
+        if (isNil(editedDescription?.trim())) {
+            toast({
+                title: "Description cannot be empty",
+                status: "error",
+                duration: 2000,
+                isClosable: true,
+            });
+            return;
+        }
+
+        setSubmittingDescription(true);
+        try {
+            const token = localStorage.getItem("token");
+            await axios.post(
+                `http://${apiIp}/tickets/edit/query`,
+                { query: editedDescription, ticketId },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            // Update local state for immediate UI update
+            setTicket(prevTicket => ({
+                ...prevTicket,
+                query: editedDescription
+            }));
+
+            fetchTicketDetails();
+            refreshTickets();
+            setEditMode(false);
+
+            toast({
+                title: "Description updated successfully",
+                status: "success",
+                duration: 2000,
+                isClosable: true,
+            });
+        } catch (err) {
+            toast({
+                title: "Failed to edit description",
+                description: "Please try again later",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+        } finally {
+            setSubmittingDescription(false);
+        }
+    };
+
     const fetchTicketDetails = async () => {
-        setLoading(true);
         try {
             const token = localStorage.getItem("token");
             const response = await axios.get(
@@ -73,15 +143,15 @@ const TicketDetails = ({ isOpen, onClose, ticketId }) => {
             );
             setTicket(response.data);
 
-            // const commentsResponse = await axios.get(
-            //     `http://${apiIp}/tickets/${ticketId}/comments`,
-            //     {
-            //         headers: {
-            //             Authorization: `Bearer ${token}`,
-            //         },
-            //     }
-            // );
-            // setCommentHistory(commentsResponse.data || []);
+            const commentsResponse = await axios.get(
+                `http://${apiIp}/tickets/comment/all/${ticketId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            setCommentHistory(commentsResponse.data || []);
         } catch (err) {
             console.error("Error fetching ticket details:", err);
             toast({
@@ -98,6 +168,9 @@ const TicketDetails = ({ isOpen, onClose, ticketId }) => {
 
     useEffect(() => {
         if (isOpen && ticketId) {
+            setEditMode(false);
+            setEditedDescription("");
+            setIsFullScreen(false);
             fetchTicketDetails();
         }
     }, [isOpen, ticketId]);
@@ -109,7 +182,7 @@ const TicketDetails = ({ isOpen, onClose, ticketId }) => {
         try {
             const token = localStorage.getItem("token");
             await axios.post(
-                `http://${apiIp}/tickets/${ticketId}/comments`,
+                `http://${apiIp}/tickets/comment/new/${ticketId}`,
                 { content: comment },
                 {
                     headers: {
@@ -159,9 +232,18 @@ const TicketDetails = ({ isOpen, onClose, ticketId }) => {
 
     return (
         <>
-            <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
+            <Modal 
+                isOpen={isOpen} 
+                onClose={onClose} 
+                size={isFullScreen ? "full" : "xl"} 
+                scrollBehavior="inside"
+            >
                 <ModalOverlay bg="blackAlpha.300" />
-                <ModalContent borderRadius="lg" maxW="800px">
+                <ModalContent 
+                    borderRadius={isFullScreen ? "0" : "lg"} 
+                    maxW={isFullScreen ? "100%" : "800px"}
+                    h={isFullScreen ? "100vh" : "auto"}
+                >
                     {loading ? (
                         <Box minH={'800px'} py={10} display="flex" justifyContent="center" alignItems="center">
                             <Spinner size="xl" color="blue.500" thickness="4px" />
@@ -191,15 +273,25 @@ const TicketDetails = ({ isOpen, onClose, ticketId }) => {
                                             {ticket.resolvedAt ? "Resolved" : "Open"}
                                         </Badge>
                                     </Box>
-                                    <IconButton
-                                        icon={<RefreshCw size={16} />}
-                                        aria-label="Refresh ticket"
-                                        mt={-10}
-                                        mr={8}
-                                        size="sm"
-                                        variant="ghost"
-                                        onClick={fetchTicketDetails}
-                                    />
+                                    <Flex position={'absolute'} top={2} right={12}>
+                                        <Tooltip label={isFullScreen ? "Exit Fullscreen" : "Fullscreen"}>
+                                            <IconButton
+                                                icon={isFullScreen ? <Minimize size={16} /> : <Maximize size={16} />}
+                                                aria-label={isFullScreen ? "Exit Fullscreen" : "Fullscreen"}
+                                                size="sm"
+                                                variant="ghost"
+                                                onClick={toggleFullScreen}
+                                                mr={2}
+                                            />
+                                        </Tooltip>
+                                        <IconButton
+                                            icon={<RefreshCw size={16} />}
+                                            aria-label="Refresh ticket"
+                                            size="sm"
+                                            variant="ghost"
+                                            onClick={fetchTicketDetails}
+                                        />
+                                    </Flex>
                                 </Flex>
                             </ModalHeader>
                             <ModalCloseButton />
@@ -228,15 +320,67 @@ const TicketDetails = ({ isOpen, onClose, ticketId }) => {
                                     <Divider />
 
                                     <Box>
-                                        <Text fontWeight="semibold" mb={2}>Description</Text>
-                                        <Box
-                                            p={4}
-                                            bg="gray.50"
-                                            borderRadius="md"
-                                            whiteSpace="pre-wrap"
-                                        >
-                                            {ticket.query}
-                                        </Box>
+                                        <Flex justify="space-between" align="center" mb={2}>
+                                            <Text fontWeight="semibold">Description</Text>
+                                            {!editMode && !ticket.resolvedAt && (
+                                                <Tooltip label="Edit description" placement="top">
+                                                    <IconButton
+                                                        size="sm"
+                                                        icon={<Edit2Icon size={14} />}
+                                                        variant="ghost"
+                                                        onClick={handleEditDescription}
+                                                        aria-label="Edit description"
+                                                    />
+                                                </Tooltip>
+                                            )}
+                                        </Flex>
+
+                                        {editMode ? (
+                                            <Box position="relative" transition="all 0.2s">
+                                                <Textarea
+                                                    value={editedDescription}
+                                                    onChange={(e) => setEditedDescription(e.target.value)}
+                                                    p={4}
+                                                    bg="blue.50"
+                                                    borderRadius="md"
+                                                    rows={6}
+                                                    resize="vertical"
+                                                    borderColor="blue.200"
+                                                    _focus={{ borderColor: "blue.400", boxShadow: "0 0 0 1px #63B3ED" }}
+                                                    transition="all 0.2s"
+                                                />
+                                                <Flex mt={2} justify="flex-end" gap={2}>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        onClick={cancelEdit}
+                                                    >
+                                                        Cancel
+                                                    </Button>
+                                                    <Button
+                                                        size="sm"
+                                                        colorScheme="blue"
+                                                        leftIcon={<Save size={14} />}
+                                                        onClick={saveDescription}
+                                                        isLoading={submittingDescription}
+                                                        loadingText="Saving..."
+                                                    >
+                                                        Save
+                                                    </Button>
+                                                </Flex>
+                                            </Box>
+                                        ) : (
+                                            <Box
+                                                p={4}
+                                                bg="gray.50"
+                                                borderRadius="md"
+                                                whiteSpace="pre-wrap"
+                                                position="relative"
+                                                transition="all 0.2s"
+                                            >
+                                                {ticket.query}
+                                            </Box>
+                                        )}
                                     </Box>
 
                                     {ticket.remark && (
@@ -258,64 +402,75 @@ const TicketDetails = ({ isOpen, onClose, ticketId }) => {
                                     <Divider />
 
                                     <Box>
-                                        <Text fontWeight="semibold" mb={3}>Comments & Updates</Text>
-                                        <VStack spacing={4} align="stretch" maxH="300px" overflowY="auto" px={1}>
+                                        <Text fontWeight="semibold" mb={3}>Ticket Updates</Text>
+                                        <VStack 
+                                            spacing={4} 
+                                            align="stretch" 
+                                            overflowY="auto" 
+                                            px={1}
+                                        >
                                             {commentHistory.length > 0 ? (
                                                 commentHistory.map((comment, index) => (
-                                                    <Box
+                                                    <Flex
                                                         key={index}
-                                                        p={3}
-                                                        borderRadius="md"
-                                                        bg={comment.isStaff ? "blue.50" : "gray.50"}
-                                                        borderLeft="3px solid"
-                                                        borderColor={comment.isStaff ? "blue.400" : "gray.300"}
+                                                        justify={comment.isIT ? 'flex-start' : 'flex-end'}
                                                     >
-                                                        <Flex justify="space-between" mb={1}>
-                                                            <Text fontWeight="medium" fontSize="sm">
-                                                                {comment.author}
-                                                                {comment.isStaff && (
-                                                                    <Badge ml={2} colorScheme="blue" variant="subtle" fontSize="xs">
-                                                                        Staff
-                                                                    </Badge>
-                                                                )}
-                                                            </Text>
-                                                            <Text fontSize="xs" color="gray.500">
-                                                                {formatDate(comment.createdAt)}
-                                                            </Text>
-                                                        </Flex>
-                                                        <Text fontSize="sm">{comment.content}</Text>
-                                                    </Box>
+                                                        <Box
+                                                            maxW="80%"
+                                                            p={3}
+                                                            borderRadius="md"
+                                                            bg={comment.isStaff ? "blue.50" : "gray.50"}
+                                                            borderLeft="3px solid"
+                                                            borderColor={comment.isIT ? "blue.400" : "gray.300"}
+                                                        >
+                                                            <Flex justify="space-between" gap={2} mb={1}>
+                                                                <Text fontWeight="medium" fontSize="sm">
+                                                                    {comment.author}
+                                                                    {comment.isIT && (
+                                                                        <Badge ml={2} colorScheme="blue" variant="subtle" fontSize="xs">
+                                                                            IT
+                                                                        </Badge>
+                                                                    )}
+                                                                </Text>
+                                                                <Text fontSize="xs" color="gray.500">
+                                                                    {formatDate(comment.createdAt)}
+                                                                </Text>
+                                                            </Flex>
+                                                            <Text fontSize="sm">{comment.content}</Text>
+                                                        </Box>
+                                                    </Flex>
                                                 ))
-                                            ) : (
-                                                <Box textAlign="center" py={4}>
-                                                    <Text color="gray.500">No comments yet</Text>
-                                                </Box>
-                                            )}
+                                            )
+                                                : (
+                                                    <Box textAlign="center" py={4}>
+                                                        <Text color="gray.500">No conversation Found.</Text>
+                                                    </Box>
+                                                )}
                                         </VStack>
                                     </Box>
 
                                     {!ticket.resolvedAt && (
-                                        <FormControl>
-                                            <FormLabel fontWeight="semibold">Add Comment</FormLabel>
+                                        <FormControl display={'flex'} gap={2} mb={4}>
                                             <Textarea
                                                 placeholder="Type your comment here..."
                                                 value={comment}
                                                 onChange={(e) => setComment(e.target.value)}
-                                                rows={3}
+                                                rows={1}
                                                 resize="vertical"
                                             />
-                                            <Flex justifyContent="flex-end" mt={2}>
-                                                <Button
-                                                    colorScheme="blue"
-                                                    size="sm"
-                                                    leftIcon={<Send size={14} />}
-                                                    onClick={handleAddComment}
-                                                    isLoading={submitting}
-                                                    // isDisabled={!comment.trim()}
-                                                    isDisabled
-                                                >
-                                                    Send
-                                                </Button>
+                                            <Flex justifyContent="flex-end" >
+                                                <Tooltip label='Send'>
+                                                    <Button
+                                                        colorScheme="blue"
+                                                        size="md"
+                                                        p={1}
+                                                        onClick={handleAddComment}
+                                                        isLoading={submitting}
+                                                        isDisabled={comment.trim() === ""}
+                                                    >
+                                                        <Send size={16} style={{ margin: 'auto' }} />
+                                                    </Button>
+                                                </Tooltip>
                                             </Flex>
                                         </FormControl>
                                     )}
@@ -336,7 +491,6 @@ const TicketDetails = ({ isOpen, onClose, ticketId }) => {
                                                 </h2>
                                                 <AccordionPanel pb={4}>
                                                     <VStack align="stretch" spacing={2}>
-                                                        {/* {ticket.attachments.map((attachment, index) => ( */}
                                                         <Flex
                                                             key={'attachment-1'}
                                                             p={2}
@@ -346,7 +500,7 @@ const TicketDetails = ({ isOpen, onClose, ticketId }) => {
                                                             align="center"
                                                         >
                                                             <Text fontSize="sm" isTruncated maxW="70%">
-                                                                {ticket.attachmentId}
+                                                                Media file {ticket.attachmentId}
                                                             </Text>
                                                             <Button
                                                                 size="xs"
@@ -356,10 +510,9 @@ const TicketDetails = ({ isOpen, onClose, ticketId }) => {
                                                                 href={`media-preview/${ticket.attachmentId}`}
                                                                 target="_blank"
                                                             >
-                                                                Download
+                                                                View
                                                             </Button>
                                                         </Flex>
-                                                        {/* ))} */}
                                                     </VStack>
                                                 </AccordionPanel>
                                             </AccordionItem>
@@ -372,7 +525,7 @@ const TicketDetails = ({ isOpen, onClose, ticketId }) => {
                                 <Button variant="outline" mr={3} onClick={onClose}>
                                     Close
                                 </Button>
-                                {ticket.resolvedAt && (
+                                {showFeedbackButton && ticket.resolvedAt && (
                                     <Button
                                         colorScheme="blue"
                                         leftIcon={<MessageSquare size={16} />}
@@ -398,9 +551,10 @@ const TicketDetails = ({ isOpen, onClose, ticketId }) => {
                     isOpen={isFeedbackOpen}
                     onClose={onFeedbackClose}
                     ticketId={ticket.id}
-                    prevFeedback={null}
-                    prevRating={0}
+                    prevFeedback={ticket.feedback || null}
+                    prevRating={ticket.rating || null}
                     ticketNumber={ticket.sequenceNo}
+                    refreshTickets={refreshTickets}
                 />
             )}
         </>

@@ -20,8 +20,6 @@ import {
   Button,
   FormControl,
   FormLabel,
-  InputGroup,
-  InputRightElement,
   useToast,
   Card,
   CardBody,
@@ -31,7 +29,7 @@ import {
   Container,
   useBreakpointValue
 } from "@chakra-ui/react";
-import { KeyRound, Eye, EyeOff, User, Mail, Phone, Building, Users } from "lucide-react";
+import { KeyRound, Mail, Phone, Building, Users } from "lucide-react";
 import axios from "axios";
 
 const apiIp = process.env.REACT_APP_API_IP;
@@ -144,10 +142,8 @@ export const UserProfile = ({ user }) => {
   return (
     <Container maxW="full" p={0}>
       <Card
-        // shadow="md"
         borderRadius={"lg"}
         w="full"
-        // mb={6}
         overflow="visible"
         borderTop="4px solid"
         borderColor="blue.400"
@@ -162,6 +158,7 @@ export const UserProfile = ({ user }) => {
               w="full"
               mb={{ base: 4, md: 6 }}
             >
+              {/* <HStack position={'relative'} borderRadius='50%' overflow={'hidden'}> */}
               <Avatar
                 name={user?.name || "Guest"}
                 size={avatarSize}
@@ -170,6 +167,10 @@ export const UserProfile = ({ user }) => {
                 shadow="md"
                 src={user?.avatarUrl}
               />
+              {/* <Box h='30%' top='70%' cursor={'pointer'} opacity={0} _hover={{ opacity: 1 }} background={'blackAlpha.300'} position={'absolute'} display={'flex'} justifyContent={'center'} alignItems={'center'} width={'full'}>
+                  <FaCamera />
+                </Box>
+              </HStack> */}
 
               <VStack spacing={1} align={"center"}>
                 <Text fontSize={nameSize} fontWeight="bold" color="gray.700" textAlign={{ base: "center", sm: "left" }}>
@@ -296,14 +297,14 @@ export const UserProfile = ({ user }) => {
             <FormControl>
               <FormLabel fontSize="sm">New Password</FormLabel>
               {/* <InputGroup size={useBreakpointValue({ base: "sm", md: "md" })}> */}
-                <Input
-                  // pr="4.5rem"
-                  type= "password"
-                  placeholder="Enter new password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-                {/* <InputRightElement>
+              <Input
+                // pr="4.5rem"
+                type="password"
+                placeholder="Enter new password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+              {/* <InputRightElement>
                   <IconButton
                     h="1.75rem"
                     size="sm"

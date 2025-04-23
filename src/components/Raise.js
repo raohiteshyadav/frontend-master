@@ -45,8 +45,7 @@ import {
   MessageSquareHeartIcon,
   NotebookIcon,
   MailCheckIcon,
-  Scale,
-  HelpCircleIcon
+  Scale
 } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
@@ -68,7 +67,7 @@ const Raise = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [lists, setLists] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState(0);
+  // const [activeTab, setActiveTab] = useState(0);
   const [selectedTab, setSelectedTab] = useState();
   const [feedbackTicket, setFeedbackTicket] = useState(null);
   const [viewTicket, setViewTicket] = useState(null);
@@ -110,12 +109,18 @@ const Raise = () => {
       setLoading(false);
     }
   };
+
+  const refreshTickets = () => {
+    fetchData();
+  }
+
   useEffect(() => {
     const currentTab = searchParams.get("tab");
-    if (["home", "service-form", "incident-form"].includes(currentTab)) {
+    if (["service-form", "incident-form"].includes(currentTab)) {
       setSelectedTab(currentTab);
     } else {
       setSelectedTab("home");
+      fetchData();
     }
   }, [searchParams]);
 
@@ -148,13 +153,17 @@ const Raise = () => {
 
   return (
     <Box bg="gray.50" minH="100vh" py={6} paddingBottom={0} px={{ base: 4, md: 8 }}>
-      <Box maxW="1400px" mx="auto" pb={0}>
+      <Box maxW="1400px" mx="auto" pb={2}>
         <Flex
           direction={{ base: "column", lg: "row" }}
+          position={'relative'}
           gap={8}
           mb={0}
         >
           <Box
+            alignSelf="start"
+            position={{ base: 'auto', lg: 'sticky' }}
+            top={{ lg: 106 }}
             w={{ base: "full", lg: "300px" }}
             minW={{ base: "full", lg: "300px" }}
           >
@@ -253,7 +262,7 @@ const Raise = () => {
             </Card>
           </Box>
 
-          <Box flex={1} overflow={'auto'}>
+          <Box flex={1} overflow={'hidden'}>
             <Box
               mb={6}
               p={6}
@@ -304,7 +313,7 @@ const Raise = () => {
                   </Box>
                   <VStack align="start" spacing={0}>
                     <Text fontWeight="medium">Incident Request</Text>
-                    <Text fontSize="sm" color="gray.500">Report a problem</Text>
+                    <Text fontSize="sm" color="gray.500">I have an Issue...</Text>
                   </VStack>
                 </Flex>
               </Card>
@@ -333,7 +342,7 @@ const Raise = () => {
                   </Box>
                   <VStack align="start" spacing={0}>
                     <Text fontWeight="medium">Service Request</Text>
-                    <Text fontSize="sm" color="gray.500">Request a service</Text>
+                    <Text fontSize="sm" color="gray.500">I need something...</Text>
                   </VStack>
                 </Flex>
               </Card>
@@ -391,7 +400,7 @@ const Raise = () => {
                               {lists.length > 0 ? (
                                 lists.map((request) => (
                                   <Tr key={request.id} >
-                                    <Td fontWeight="medium" color="blue.600">
+                                    <Td fontWeight="medium" color="blue.600" _hover={{ textDecor: 'underline', cursor: 'pointer' }} onClick={() => setViewTicket(request.id)}>
                                       {request.sequenceNo}
                                     </Td>
                                     <Tooltip hasArrow label={<Text whiteSpace="pre-wrap">{request.query}</Text>}>
@@ -413,8 +422,8 @@ const Raise = () => {
                                         {request.createdAt}
                                       </Flex>
                                     </Td>
-                                    <Td>
-                                      <Menu>
+                                    <Td >
+                                      <Menu >
                                         <MenuButton as={IconButton} aria-label="Options" icon={<MoreVertical size={16} />} variant="ghost" size="sm" />
                                         <MenuList>
                                           <MenuItem onClick={() => setViewTicket(request.id)} icon={<Eye size={16} />}>View Details</MenuItem>
@@ -472,26 +481,30 @@ const Raise = () => {
             </Card>
           </Box>
         </Flex>
-      </Box>
+      </Box >
       {/* Ticket Details Modal */}
-      <TicketDetails
+      < TicketDetails
         isOpen={!!viewTicket}
         onClose={() => setViewTicket(null)}
         ticketId={viewTicket}
+        refreshTickets={refreshTickets}
       />
       {/* Feedback Modal */}
-      {feedbackTicket && (
-        <TicketFeedback
-          isOpen={!!feedbackTicket}
-          onClose={() => setFeedbackTicket(null)}
-          ticketId={feedbackTicket.id}
-          ticketNumber={feedbackTicket.sequenceNo}
-          prevRating={null}
-          prevFeedback={null}
-          isDisabled={isNull(feedbackTicket.resolvedAt)}
-        />
-      )}
-    </Box>
+      {
+        feedbackTicket && (
+          <TicketFeedback
+            isOpen={!!feedbackTicket}
+            onClose={() => setFeedbackTicket(null)}
+            ticketId={feedbackTicket.id}
+            ticketNumber={feedbackTicket.sequenceNo}
+            prevFeedback={feedbackTicket.feedback || null}
+            prevRating={feedbackTicket.rating || null}
+            refreshTickets={refreshTickets}
+            isDisabled={isNull(feedbackTicket.resolvedAt)}
+          />
+        )
+      }
+    </Box >
   );
 };
 

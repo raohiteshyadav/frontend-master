@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  ChakraProvider,
   Box,
   VStack,
   Input,
@@ -13,7 +12,6 @@ import {
   Spinner,
   useToast,
   InputGroup,
-  InputRightElement,
   Divider,
   CardHeader,
   Flex,

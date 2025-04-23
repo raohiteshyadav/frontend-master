@@ -16,7 +16,6 @@ import {
   VStack,
   HStack,
   Tooltip,
-  Badge,
   CardHeader,
   Card
 } from "@chakra-ui/react";
@@ -28,12 +27,12 @@ const PreviewHead = () => {
   const navigate = useNavigate();
 
   const [description, setDescription] = useState("");
-  const [severity, setSeverity] = useState("");
   const [category, setCategory] = useState("");
   const [subcategory, setSubcategory] = useState("");
   const [item, setItem] = useState("");
+  const [severity, setSeverity] = useState();
+  const [fileName, setFileName] = useState();
   const [attachmentId, setAttachmentId] = useState(null);
-  const [fileName, setFileName] = useState(null);
   const [approved, setApproved] = useState(null);
   const [rejected, setRejected] = useState(null);
 
@@ -102,7 +101,7 @@ const PreviewHead = () => {
   );
 
   return (
-    <Container  maxW="container.md" py={8}>
+    <Container maxW="container.md" py={8}>
       <Card variant="outline" shadow="lg" p={2}>
         <VStack spacing={4} align="stretch">
           <CardHeader borderBottom={"1px solid gray"}>
@@ -141,13 +140,13 @@ const PreviewHead = () => {
               label={
                 approved
                   ? `Approved on: ${new Date(approved).toLocaleDateString(
-                      "en-GB",
-                      { day: "numeric", month: "short", year: "numeric" }
-                    )} ${new Date(approved).toLocaleTimeString("en-US", {
-                      hour: "numeric",
-                      minute: "numeric",
-                      hour12: true,
-                    })}`
+                    "en-GB",
+                    { day: "numeric", month: "short", year: "numeric" }
+                  )} ${new Date(approved).toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                  })}`
                   : "Approve ticket"
               }
               hasArrow
@@ -167,13 +166,13 @@ const PreviewHead = () => {
               label={
                 rejected
                   ? `Rejected on: ${new Date(rejected).toLocaleDateString(
-                      "en-GB",
-                      { day: "numeric", month: "short", year: "numeric" }
-                    )} ${new Date(rejected).toLocaleTimeString("en-US", {
-                      hour: "numeric",
-                      minute: "numeric",
-                      hour12: true,
-                    })}`
+                    "en-GB",
+                    { day: "numeric", month: "short", year: "numeric" }
+                  )} ${new Date(rejected).toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                  })}`
                   : "Reject ticket"
               }
               hasArrow

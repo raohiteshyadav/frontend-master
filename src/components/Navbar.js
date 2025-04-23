@@ -28,7 +28,7 @@ const Navbar = () => {
 
   const bgColor = useColorModeValue("#1a202c", "#2D3748");
   const titleGradient = "linear(to-r, orange.400, white, green.400)";
-  const mobileView = useBreakpointValue({ base: true, md: false });
+  // const mobileView = useBreakpointValue({ base: true, md: false });
   const displayTitle = useBreakpointValue({ base: false, md: false, lg: true });
   const selectedItem = window.location.pathname;
   const tabMapping = {
@@ -37,6 +37,8 @@ const Navbar = () => {
     'IT Dept': '/home',
     'IT Head': '/home',
     'Super-Admin': '/superadmin',
+    'Approval': '/approval',
+    'IT Head': '/'
   };
 
   const handleClickOutside = (event) => {
@@ -162,18 +164,19 @@ const Navbar = () => {
         <HStack spacing={5} display={{ base: "none", md: "flex" }}>
           {navItems.map((item, index) => (
             // <Tooltip key={index} label={item.label} placement="bottom" hasArrow>
-              <Button
-                variant="ghost"
-                leftIcon={item.icon}
-                onClick={item.onClick}
-                color={tabMapping[item.label] == selectedItem ? "#2D2E2E" : "#fbfbfb"}
-                bg={tabMapping[item.label] == selectedItem ? "#fbfbfb" : "none"}
-                _hover={{ bg: "#fbfbfb", color:"#2D2E2E" }}
-                size="sm"
-                px={2}
-              >
-                {item.label}
-              </Button> 
+            <Button
+              key={index}
+              variant="ghost"
+              leftIcon={item.icon}
+              onClick={item.onClick}
+              color={tabMapping[item.label] == selectedItem ? "#2D2E2E" : "#fbfbfb"}
+              bg={tabMapping[item.label] == selectedItem ? "#fbfbfb" : "none"}
+              _hover={{ bg: "#fbfbfb", color: "#2D2E2E" }}
+              size="sm"
+              px={2}
+            >
+              {item.label}
+            </Button>
             // </Tooltip>
           ))}
 
@@ -212,7 +215,7 @@ const Navbar = () => {
 
           {!isLoginPage && (
             <Box pt={2}>
-              <LogoutButton fullWidth={true} />
+              <LogoutButton key={'logout'} fullWidth={true} />
             </Box>
           )}
         </VStack>

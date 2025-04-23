@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, useToast, Box, useBreakpointValue } from "@chakra-ui/react";
+import { Button, useToast, useBreakpointValue } from "@chakra-ui/react";
 import { LogOut } from "lucide-react";
 
 const LogoutButton = ({ fullWidth = false }) => {

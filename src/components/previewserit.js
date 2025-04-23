@@ -15,7 +15,6 @@ import {
   CardHeader,
   Text,
   Divider,
-  Badge,
   Flex,
   Skeleton,
 } from "@chakra-ui/react";

@@ -168,7 +168,7 @@ const MediaPreview = ({
 
     return (
       <VStack spacing={4} align="start">
-        <Heading size="md">{name}</Heading>
+        <Heading size="md">Preview not available.</Heading>
         {downloadButton}
       </VStack>
     );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Text, useBreakpointValue } from '@chakra-ui/react';
+import { Box, useBreakpointValue } from '@chakra-ui/react';
 import { keyframes } from '@emotion/react';
 
 const Marquee = ({ text }) => {

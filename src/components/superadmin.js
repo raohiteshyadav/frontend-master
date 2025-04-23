@@ -19,11 +19,9 @@ import {
   Settings,
   ShieldCheckIcon,
   AlertTriangle,
-  LayoutDashboard,
   HomeIcon,
   ChevronLeft
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../providers/authProvider";
 import AllUsers from "./allUsers";
 import { UserProfile } from "./userProfile";
@@ -32,7 +30,6 @@ import UserCat from "./itsuperadmincat";
 
 const SuperAdmin = () => {
   const user = useAuth();
-  const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState("user-list");
   const bgColor = useColorModeValue("gray.50", "gray.900");
   const scrollToMainContent = (offset = 200) => {
@@ -49,9 +46,10 @@ const SuperAdmin = () => {
       <Container maxW="1400px" p={0} mx={'auto'}>
         <Flex
           direction={{ base: "column", lg: "row" }}
+          position={'relative'}
           gap={8}
         >
-          <Box w={{ base: "full", lg: "300px" }} minW={{ base: "full", lg: "300px" }}>
+          <Box alignSelf="start" position={{ base: 'relative', lg: 'sticky' }} top={{ lg: 106 }} w={{ base: "full", lg: "300px" }} minW={{ base: "full", lg: "300px" }}>
             <Card shadow="sm" borderRadius="lg" overflow="hidden">
               <CardBody p={0}>
                 <UserProfile user={user} />

@@ -24,7 +24,7 @@ import axios from "axios";
 
 const apiIp = process.env.REACT_APP_API_IP;
 
-const TicketFeedback = ({ isOpen, onClose, ticketId, ticketNumber, prevRating, prevFeedback, isDisabled }) => {
+const TicketFeedback = ({ isOpen, onClose, ticketId, ticketNumber, prevRating, prevFeedback, isDisabled, refreshTickets = () => { } }) => {
   const [rating, setRating] = useState(prevRating);
   const [hoverRating, setHoverRating] = useState(0);
   const [feedback, setFeedback] = useState(prevFeedback);
@@ -65,11 +65,11 @@ const TicketFeedback = ({ isOpen, onClose, ticketId, ticketNumber, prevRating, p
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        `http://${apiIp}/tickets/feedback`,
+        `http://${apiIp}/tickets/submission/feedback`,
         {
           ticketId: ticketId,
           rating: rating,
-          feedback: feedback.trim(),
+          feedback: feedback?.trim(),
         },
         {
           headers: {
@@ -85,7 +85,7 @@ const TicketFeedback = ({ isOpen, onClose, ticketId, ticketNumber, prevRating, p
         duration: 3000,
         isClosable: true,
       });
-
+      refreshTickets();
       setRating(0);
       setFeedback("");
       onClose();

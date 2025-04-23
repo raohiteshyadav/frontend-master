@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  Box, Heading, Text, Link, SimpleGrid, VStack, Container, Badge, Flex, Icon,
-  HStack, Input, Select, InputGroup, InputLeftElement, IconButton, Tooltip,
-  Collapse, Avatar, SlideFade, Divider, useDisclosure, Button, Stack, Switch,
+  Box, Heading, Text, Link, SimpleGrid, Container, Badge, Flex, Icon,
+  HStack, Input, Select, InputGroup, InputLeftElement, IconButton,
+  Collapse, Avatar, SlideFade, Button, Stack, Switch,
   FormControl, FormLabel
 } from '@chakra-ui/react';
 import {
-  PhoneCall, Mail, User, Briefcase, Github, Code, Linkedin, ExternalLink, Terminal,
-  Coffee, Search, Filter, ChevronDown, ChevronUp, X, Layers
+  PhoneCall, Mail, Briefcase, Code, Terminal, Search, X
 } from 'lucide-react';
 
 const ContactUs = () => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import {
   Box,
   VStack,
@@ -43,7 +43,7 @@ const ServiceRequestForm = () => {
   const [item, setItem] = useState("");
   const [attachmentId, setAttachmentId] = useState(null);
   const [userId, setUserId] = useState("");
-  const [fileName, setFileName] = useState("");
+  const [fileName, setFileName] = useState(null);
   const [name, setName] = useState("");
 
   const [categories, setCategories] = useState([]);
@@ -188,7 +188,6 @@ const ServiceRequestForm = () => {
           setLoading((prev) => ({ ...prev, items: false }));
         }
       } else {
-        // Clear items if subcategory is cleared
         setItems([]);
         setItem("");
       }
@@ -295,7 +294,7 @@ const ServiceRequestForm = () => {
   };
 
   return (
-    <Card variant="outline">
+    <Card overflow={'hidden'}>
       <CardHeader bg="teal.50" py={6} backgroundImage="linear-gradient(to right, #abede0, #e6fffa)">
         <Heading
           size="lg"

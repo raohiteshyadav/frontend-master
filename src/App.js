@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from
 import {
   Box,
   Text,
-  Spinner,
   Flex,
   Image,
   useColorModeValue,
@@ -22,6 +21,7 @@ import UserCat from "./components/itsuperadmincat";
 import SuperAdmin from "./components/superadmin";
 import { Home, LogIn } from "lucide-react";
 import MediaPreview from "./components/mediaPreview";
+import './App.css'
 
 const ServiceRequestForm = lazy(() => import("./components/ServiceRequestForm"));
 const IncidentRequestForm = lazy(() => import("./components/IncidentRequestForm"));
@@ -90,7 +90,7 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
     return (
       <Flex
         width="full"
-        minH="75vh"
+        minH="80vh"
         justify="center"
         align="center"
         bg={bgColor}
@@ -121,7 +121,7 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
     return (
       <Flex
         width="full"
-        minH="78vh"
+        minH="80vh"
         justify="center"
         align="center"
         bg={bgColor}
@@ -170,12 +170,12 @@ function App() {
           <Suspense fallback={<LoadingScreen />}>
             <Flex direction="column" minH="100vh">
               <Navbar />
-              <Box flex="1" >
+              <Box flex="1" className="custom-text">
                 <Routes>
                   <Route path="/service-request-form/:id" element={<PreviewHead />} />
                   <Route path="/service-request-form-it/:id" element={<PreviewSerIt />} />
                   <Route path="/service-request-form-dept/:id" element={<PreviewIncSerIt />} />
-                  <Route path="/media-preview/:id" element={<MediaPreview/>} />
+                  <Route path="/media-preview/:id" element={<MediaPreview />} />
                   <Route path="/raise-a-ticket" element={<Raise />} />
                   <Route path="/service-request" element={<ServiceRequestForm />} />
                   <Route path="/incident-request" element={<IncidentRequestForm />} />

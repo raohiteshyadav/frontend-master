@@ -54,6 +54,7 @@ import { debounce, toUpper } from "lodash";
 import { Search2Icon } from "@chakra-ui/icons";
 import ExcelReportDownloadButton from "./excelReportDownloadButton";
 import Confetti from "./confetti";
+import TicketDetails from "./ticketDetails";
 
 const UserDetailsBox = ({ userDetails, onClose }) => (
   <Card
@@ -125,6 +126,7 @@ const DashboardIt = () => {
   const [filterItUser, setFilterItUser] = useState([]);
   const [users, setUsers] = useState([]);
   const [ticketNo, setTicketNo] = useState(null);
+  const [viewTicket, setViewTicket] = useState(null);
 
   const fetchOptions = async (inputValue) => {
     const token = localStorage.getItem("token");
@@ -664,7 +666,7 @@ const DashboardIt = () => {
                   <Th p={1}>Status</Th>
                   <Th p={1}>Type</Th>
                   <Th p={1}>Approval<br /> Status</Th>
-                  <Th p={1}>Approver Remarks</Th>
+                  {/* <Th p={1}>Approver Remarks</Th> */}
                   <Th p={1}>Resolved By</Th>
                   <Th p={1}>Actions</Th>
                 </Tr>
@@ -688,7 +690,8 @@ const DashboardIt = () => {
                 ) : (
                   lists.map((request) => (
                     <Tr key={request.id} _hover={{ bg: "gray.50" }}>
-                      <Td fontWeight="medium">{request.sequenceNo}</Td>
+                      <Td fontWeight="medium" color="blue.600" _hover={{ textDecor: 'underline', cursor: 'pointer' }} onClick={() => setViewTicket(request.id)}>
+                        {request.sequenceNo}</Td>
                       <Td p={1}>{request.createdAt}</Td>
                       <Td>
                         <Tooltip label={<UnorderedList spacing={1} style={{ paddingLeft: "1rem", marginLeft: "-3px" }}>
@@ -755,11 +758,11 @@ const DashboardIt = () => {
                           </HStack>
                         )}
                       </Td>
-                      <Td p={1}>
+                      {/* <Td p={1}>
                         <Tooltip label={request.itHeadRemark || "No remarks"}>
                           <Text noOfLines={1}>{request.itHeadRemark || "-"}</Text>
                         </Tooltip>
-                      </Td>
+                      </Td> */}
                       <Td p={1}>{request.resolvedBy || "-"}</Td>
                       <Td p={1}>
                         <Button
@@ -829,6 +832,14 @@ const DashboardIt = () => {
           onClose={handleCloseUserDetails}
         />
       )}
+      {/* Ticket Details Modal */}
+      < TicketDetails
+        isOpen={!!viewTicket}
+        onClose={() => setViewTicket(null)}
+        ticketId={viewTicket}
+        refreshTickets={fetchData}
+        showFeedbackButton={false}
+      />
     </Box>
   );
 };

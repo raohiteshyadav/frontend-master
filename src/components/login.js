@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Mail, Lock, ArrowRight, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
-  Box,
   Button,
   Input,
   InputGroup,
   InputLeftElement,
   Stack,
-  Text,
   useToast,
   Grid,
   GridItem,

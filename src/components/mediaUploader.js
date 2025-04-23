@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import {
   Box,
-  Button,
   Center,
   FormControl,
   FormErrorMessage,
@@ -15,8 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
-import { Cloud, CloudUpload, X } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { CloudUpload, X } from "lucide-react";
 
 const DEFAULT_ACCEPTED_TYPES = [
   "application/pdf",
